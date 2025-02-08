@@ -19,12 +19,13 @@ li {
 
 .container {
   width: 100%;
-  max-width: 500px;
+  max-width: 430px;
   background: white;
   overflow: hidden;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 10px;
-  border: 2px solid black;
+  /* border: 2px solid black; */
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .container h2 {

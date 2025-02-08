@@ -3,6 +3,7 @@ import { shortenedRoutes } from "./routes/shortener.routes.js";
 
 const app = express();
 const PORT = 3000;
+app.set("view engine", "ejs")
 
 app.use(express.json());
 app.use(express.static("public"));

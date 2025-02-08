@@ -22,8 +22,26 @@
       </form>
       <h2>Shortend Urls</h2>
       <ul>
-        {{ shortened_urls }}
+        <!-- {{ shortened_urls }} -->
+        <!--  const content = file.toString().replaceAll(
+          "{{ shortened_urls }}",
+          Object.entries(links)
+            .map(
+              ([shortCode, url]) =>
+                `<li><a href="/${shortCode}" target="_blank">${host}/${shortCode}</a> - ${url}</li>`
+            )
+            .join("")
+        ); -->
       </ul>
+      <% Object.entries(links).map(([shortCode, url]) => { %>
+        <% const truncatedUrl = url.length >= 30 ? `${url.slice(0, 30)}...` : url %>
+      <li>
+        <a href="/<%= shortCode%>" target="_blank">
+          <%=host %>/ <%= shortCode%>
+        </a>
+        - <%= truncatedUrl %>
+      </li>
+      <% }) %>
     </div>
     <!-- <script>
       const fetchShortendUrl = async () => {
