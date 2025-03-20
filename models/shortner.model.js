@@ -45,9 +45,10 @@ export const insertShortLink = async ({ url, shortCode }) => {
 export const getLinkByShortCode = async (shortCode) => {
   // return await shortnerCollection.findOne({ shortCode });
   const [rows] = await db.execute(
-    "select * from short_links where short_code = ?, ",
+    "SELECT * FROM short_links WHERE short_code = ?",
     [shortCode]
   );
+
   if (rows.length > 0) {
     return rows[0];
   } else {

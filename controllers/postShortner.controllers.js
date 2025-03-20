@@ -7,6 +7,7 @@ export const postUrlShortner = async (req, res) => {
     const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
 
     const links = await loadLinks();
+    
 
     if (links[finalShortCode]) {
       return res
