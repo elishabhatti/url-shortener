@@ -1,5 +1,15 @@
 import crypto from "crypto";
-import { loadLinks, insertShortLink, getLinkByShortCode } from "../models/shortner.model.js";
+// import {
+//   loadLinks,
+//   insertShortLink,
+//   getLinkByShortCode,
+// } from "../models/shortner.model.js";
+
+import {
+  loadLinks,
+  getLinkByShortCode,
+  insertShortLink,
+} from "../services/shortener.services.js";
 
 export const postUrlShortner = async (req, res) => {
   try {
@@ -7,7 +17,6 @@ export const postUrlShortner = async (req, res) => {
     const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
 
     const links = await loadLinks();
-    
 
     if (links[finalShortCode]) {
       return res
@@ -26,7 +35,7 @@ export const postUrlShortner = async (req, res) => {
     // await saveLinks(links);
 
     // await saveLinks({ url, shortCode });
-    await insertShortLink({ url, shortCode: finalShortCode })
+    await insertShortLink({ url, shortCode: finalShortCode });
 
     return res.redirect("/");
   } catch (error) {
@@ -52,7 +61,7 @@ export const redirectToShortLinks = async (req, res) => {
     const { shortCode } = req.params;
     // const links = await loadLinks();
     const link = await getLinkByShortCode(shortCode);
-    
+
     // if (!links[shortCode]) return res.status(404).send("404 error occurred");
     if (!link) return res.redirect("/404");
     return res.redirect(link.url);

@@ -33,11 +33,11 @@
             .join("")
         ); -->
       </ul>
-      <% links.map(({short_code, url}) => { %>
+      <% links.map(({shortCode, url}) => { %>
         <% const truncatedUrl = url.length >= 30 ? `${url.slice(0, 30)}...` : url %>
       <li>
-        <a href="/<%= short_code%>" target="_blank">
-          <%=host %>/ <%= short_code%>
+        <a href="/<%= shortCode%>" target="_blank">
+          <%=host %>/ <%= shortCode%>
         </a>
         - <%= truncatedUrl %>
       </li>
