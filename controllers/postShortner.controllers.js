@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { loadLinks, saveLinks, getLinkByShortCode } from "../models/shortner.model.js";
+import { loadLinks, insertShortLink, getLinkByShortCode } from "../models/shortner.model.js";
 
 export const postUrlShortner = async (req, res) => {
   try {
@@ -24,7 +24,8 @@ export const postUrlShortner = async (req, res) => {
     // links[finalShortCode] = url; // Use finalShortCode instead of shortCode
     // await saveLinks(links);
 
-    await saveLinks({ url, shortCode });
+    // await saveLinks({ url, shortCode });
+    await insertShortLink({ url, shortCode: finalShortCode })
 
     return res.redirect("/");
   } catch (error) {

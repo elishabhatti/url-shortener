@@ -1,5 +1,6 @@
 import express from "express";
 import { shortenedRoutes } from "./routes/shortener.routes.js";
+// import {connectDB} from "./config/db-client.js"
 
 const app = express();
 const PORT = 3000;
