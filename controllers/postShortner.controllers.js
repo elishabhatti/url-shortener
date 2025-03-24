@@ -43,8 +43,18 @@ export const getShortnerPage = async (req, res) => {
     // const file = await fs.readFile(path.join("views", "index.html"));
     // const links = await loadLinks();
     const links = await getAllShortLinks();
+    // let isLoggedIn = req.headers.cookie;
+    // isLoggedIn = Boolean(
+    //   isLoggedIn
+    //     ?.split(";")
+    //     ?.find((cookie) => cookie.trim().startsWith("isLoggedIn"))
+    //     ?.split("=")[1]
+    // );
+    
+    let isLoggedIn = req.cookies.isLoggedIn;
+    console.log(isLoggedIn);
 
-    return res.render("index", { links, host: req.host });
+    return res.render("index", { links, host: req.host, isLoggedIn });
   } catch (error) {
     console.error(error);
     return res.status(500).send("Internal server error");
@@ -52,8 +62,8 @@ export const getShortnerPage = async (req, res) => {
 };
 
 export const redirectToShortLinks = async (req, res) => {
-  try { 
-    const { shortCode } = req.params; 
+  try {
+    const { shortCode } = req.params;
     // const links = await loadLi[nks();
     const link = await getShortLinkByShortCode(shortCode);
 

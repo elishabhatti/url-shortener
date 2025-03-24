@@ -16,6 +16,7 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^6.5.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.41.0",
     "ejs": "^3.1.10",

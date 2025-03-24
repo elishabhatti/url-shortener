@@ -7,7 +7,11 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <%- include('./partials/header') %>
+    <%- include('./partials/header') %> <% if(isLoggedIn) { %>
+    <h2>Your Are Logged In</h2>
+    <% } else { %>
+    <h2>Your Are not Logged In</h2>
+    <% } %>
     <div class="container">
       <h2>URL Shortner</h2>
       <form action="/" method="post">
