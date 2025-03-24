@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
+    <%- include('./partials/header') %>
     <div class="container">
       <h2>URL Shortner</h2>
       <form action="/" method="post">
@@ -36,8 +37,8 @@
       <% links.map(({shortCode, url}) => { %> <% const truncatedUrl = url.length
       >= 30 ? `${url.slice(0, 30)}...` : url %>
       <li>
-        <a href="/<%= shortCode%>" target="_blank">
-          <%=host %>/ <%= shortCode%>
+        <a href="/<%= shortCode %>" target="_blank">
+          <%=host %>/<%= shortCode%>
         </a>
         - <%= truncatedUrl %>
       </li>
@@ -88,5 +89,6 @@
 
       fetchShortendUrl();
     </script> -->
+    <%- include('./partials/footer') %>
   </body>
 </html>

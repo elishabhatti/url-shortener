@@ -52,9 +52,9 @@ export const getShortnerPage = async (req, res) => {
 };
 
 export const redirectToShortLinks = async (req, res) => {
-  try {
-    const { shortCode } = req.params;
-    // const links = await loadLinks();
+  try { 
+    const { shortCode } = req.params; 
+    // const links = await loadLi[nks();
     const link = await getShortLinkByShortCode(shortCode);
 
     // if (!links[shortCode]) return res.status(404).send("404 error occurred");
