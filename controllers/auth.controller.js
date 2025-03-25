@@ -8,7 +8,15 @@ export const getLoginPage = (req, res) => {
   return res.render("./auth/login");
 };
 
-export const postLogin = (req, res) => {
+export const postLogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  const userExists = await getUserByEmail(email);
+  console.log("User Exisits", userExists);
+
+  if (!userExists) return res.redirect("/login");
+  if (userExists.password !== password) return res.redirect("/login");
+
   res.cookie("isLoggedIn", true);
   res.redirect("/");
 };
@@ -17,11 +25,11 @@ export const postRegister = async (req, res) => {
   const { name, email, password } = req.body;
 
   const userExists = await getUserByEmail(email);
-  console.log("User Exisits",userExists);
+  console.log("User Exisits", userExists);
 
   if (userExists) return res.redirect("/register");
   const [user] = await createUser({ name, email, password });
-  console.log(user);  
+  console.log(user);
 
   res.redirect("/login");
 };
