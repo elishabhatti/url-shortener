@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <%- include('./partials/header') %> <% if(isLoggedIn) { %>
+    <%- include('./partials/header') %> <% if(user) { %>
     <h2>Your Are Logged In</h2>
     <% } else { %>
     <h2>Your Are not Logged In</h2>

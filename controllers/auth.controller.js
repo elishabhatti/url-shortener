@@ -44,3 +44,8 @@ export const postRegister = async (req, res) => {
 
   res.redirect("/login");
 };
+
+export const getMe = (req, res) => {
+  if (!req.user) return res.send("Not Logged In");;
+  return res.send(`Hey ${req.user.name}`)
+};

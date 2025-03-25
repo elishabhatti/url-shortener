@@ -32,8 +32,7 @@ export const postUrlShortner = async (req, res) => {
 export const getShortnerPage = async (req, res) => {
   try {
     const links = await getAllShortLinks();
-    let isLoggedIn = req.cookies.access_token;
-    return res.render("index", { links, host: req.host, isLoggedIn });
+    return res.render("index", { links, host: req.host });
   } catch (error) {
     console.error(error);
     return res.status(500).send("Internal server error");
