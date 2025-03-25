@@ -1,4 +1,4 @@
-import { getUserByEmail, createUser } from "../services/auth.services.js";
+import { getUserByEmail, createUser, comparePassword, hashPassword } from "../services/auth.services.js";
 
 export const getRegistrationPage = (req, res) => {
   return res.render("./auth/register");
@@ -27,8 +27,10 @@ export const postRegister = async (req, res) => {
   const userExists = await getUserByEmail(email);
   console.log("User Exisits", userExists);
 
+  const hashedPassoword = await hashPassword(password)
+
   if (userExists) return res.redirect("/register");
-  const [user] = await createUser({ name, email, password });
+  const [user] = await createUser({ name, email, password : hashedPassoword });
   console.log(user);
 
   res.redirect("/login");

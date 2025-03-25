@@ -16,6 +16,8 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^6.5.0",
+    "argon2": "^0.41.1",
+    "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.41.0",
