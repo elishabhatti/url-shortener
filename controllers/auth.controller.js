@@ -3,7 +3,9 @@ import {
   createUser,
   comparePassword,
   hashPassword,
+  generateToken,
 } from "../services/auth.services.js";
+import jwt from "jsonwebtoken";
 
 export const getRegistrationPage = (req, res) => {
   return res.render("./auth/register");
@@ -22,7 +24,12 @@ export const postLogin = async (req, res) => {
   const isPasswordValid = await comparePassword(password, userExists.password);
   if (!isPasswordValid) return res.redirect("/login");
 
-  res.cookie("isLoggedIn", true);
+  const token = generateToken({
+    id: userExists.id,
+    name: userExists.name,
+    password: userExists.password,
+  });
+  res.cookie("access_token", token);
   res.redirect("/");
 };
 
