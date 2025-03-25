@@ -15,6 +15,4 @@ app.use(cookieParser());
 app.use(authRouter);
 app.use(shortenedRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+app.listen(PORT);
