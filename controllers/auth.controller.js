@@ -7,14 +7,17 @@ import {
 } from "../services/auth.services.js";
 
 export const getRegistrationPage = (req, res) => {
+  if (req.user) return res.redirect("/");
   return res.render("./auth/register");
 };
 
 export const getLoginPage = (req, res) => {
+  if (req.user) return res.redirect("/");
   return res.render("./auth/login");
 };
 
 export const postLogin = async (req, res) => {
+  if (req.user) return res.redirect("/");
   const { email, password } = req.body;
 
   const userExists = await getUserByEmail(email);
@@ -33,6 +36,7 @@ export const postLogin = async (req, res) => {
 };
 
 export const postRegister = async (req, res) => {
+  if (req.user) return res.redirect("/");
   const { name, email, password } = req.body;
 
   const userExists = await getUserByEmail(email);
@@ -45,6 +49,11 @@ export const postRegister = async (req, res) => {
 };
 
 export const getMe = (req, res) => {
-  if (!req.user) return res.send("Not Logged In");;
-  return res.send(`Hey ${req.user.name}`)
+  if (!req.user) return res.send("Not Logged In");
+  return res.send(`Hey ${req.user.name}`);
+};
+
+export const logoutUser = (req, res) => {
+  res.clearCookie("access_token");
+  res.redirect("/login");
 };
