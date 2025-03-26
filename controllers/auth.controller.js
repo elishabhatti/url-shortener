@@ -8,12 +8,12 @@ import {
 
 export const getRegistrationPage = (req, res) => {
   if (req.user) return res.redirect("/");
-  return res.render("./auth/register");
+  return res.render("./auth/register", { errors: req.flash("errors") });
 };
 
 export const getLoginPage = (req, res) => {
   if (req.user) return res.redirect("/");
-  return res.render("./auth/login");
+  return res.render("./auth/login", {errors: req.flash("errors")});
 };
 
 export const postLogin = async (req, res) => {
@@ -21,7 +21,10 @@ export const postLogin = async (req, res) => {
   const { email, password } = req.body;
 
   const userExists = await getUserByEmail(email);
-  if (!userExists) return res.redirect("/login");
+  if (!userExists){
+    req.flash("errors", "Invalid Password")
+    return res.redirect("/login");
+  } 
 
   const isPasswordValid = await comparePassword(password, userExists.password);
   if (!isPasswordValid) return res.redirect("/login");
@@ -40,7 +43,10 @@ export const postRegister = async (req, res) => {
   const { name, email, password } = req.body;
 
   const userExists = await getUserByEmail(email);
-  if (userExists) return res.redirect("/register");
+  if (userExists) {
+    req.flash("errors", "User already exists");
+    return res.redirect("/register");
+  }
 
   const hashedPassword = await hashPassword(password);
   await createUser({ name, email, password: hashedPassword });

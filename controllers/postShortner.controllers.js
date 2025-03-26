@@ -13,14 +13,14 @@ export const postUrlShortner = async (req, res) => {
     if (links) {
       return res
         .status(400)
-        .send("Short code already exists. Please choose another.");
+        .send("Chosse Another Name.");
     }
     try {
       new URL(url);
     } catch (error) {
       return res.status(400).send("Invalid URL.");
     }
-    await insertShortLink({ url, shortCode: finalShortCode });
+    await insertShortLink({ url, shortCode: finalShortCode, userId: req.user.id });
 
     return res.redirect("/");
   } catch (error) {
@@ -31,7 +31,8 @@ export const postUrlShortner = async (req, res) => {
 
 export const getShortnerPage = async (req, res) => {
   try {
-    const links = await getAllShortLinks();
+    if (!req.user) return res.redirect("/login");
+    const links = await getAllShortLinks(req.user.id);
     return res.render("index", { links, host: req.host });
   } catch (error) {
     console.error(error);

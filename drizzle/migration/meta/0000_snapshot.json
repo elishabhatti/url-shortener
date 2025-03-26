@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "71a20eb6-3b17-4ecf-bdfe-64e6528e8d8d",
+  "id": "48ee103e-0a34-4402-a118-f1b47c831703",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "short_link": {
@@ -27,10 +27,47 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "short_link_user_id_users_id_fk": {
+          "name": "short_link_user_id_users_id_fk",
+          "tableFrom": "short_link",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {
         "short_link_id": {
           "name": "short_link_id",
@@ -82,19 +119,19 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "cal::local_datetime",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "now()"
+          "default": "(now())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "cal::local_datetime",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "now()"
+          "default": "(now())"
         }
       },
       "indexes": {},
