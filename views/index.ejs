@@ -3,96 +3,105 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Url Shortner</title>
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="style.css" />
+    <!-- ZMDI Material Design Iconic Font CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/material-design-iconic-font@2.2.0/dist/css/material-design-iconic-font.min.css"
+    />
+    <title>URL Shortener</title>
   </head>
+
   <body>
-    <%- include('./partials/header') %> <% if(user) { %>
-    <h2>Your Are Logged In</h2>
-    <% } else { %>
-    <h2>Your Are not Logged In</h2>
-    <% } %>
-    <div class="container">
-      <h2>URL Shortner</h2>
-      <form action="/" method="post">
-        <div>
-          <label for="url">Url:</label>
-          <input type="url" name="url" id="url" required />
+    <%- include('./partials/header.ejs') %>
+
+    <div class="main">
+      <section class="url-shortener">
+        <div class="container">
+          <div class="shortener-content">
+            <div class="user-status">
+              <% if (user) { %>
+              <div class="status-badge success">
+                <i class="zmdi zmdi-check-circle"></i>
+                <span>You are logged in</span>
+              </div>
+              <% } else { %>
+              <div class="status-badge warning">
+                <i class="zmdi zmdi-alert-circle"></i>
+                <span>You are not logged in</span>
+              </div>
+              <% } %>
+            </div>
+
+            <div class="shortener-form">
+              <h1 class="form-title">URL Shortener</h1>
+              <form action="/" method="post" class="url-form" id="url-form">
+                <div class="form-group">
+                  <label for="url">
+                    <i class="zmdi zmdi-link"></i>
+                  </label>
+                  <input
+                    type="url"
+                    name="url"
+                    id="url"
+                    placeholder="Enter URL"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="shortCode">
+                    <i class="zmdi zmdi-code"></i>
+                  </label>
+                  <input
+                    type="text"
+                    name="shortCode"
+                    id="shortCode"
+                    placeholder="Enter custom short code"
+                  />
+                </div>
+                <div class="form-group form-button">
+                  <input
+                    type="submit"
+                    name="shorten"
+                    id="shorten"
+                    class="form-submit"
+                    value="Shorten"
+                  />
+                </div>
+              </form>
+            </div>
+
+            <div class="shortened-urls">
+              <h2 class="section-title">Shortened URLs</h2>
+              <% if (links && links.length > 0) { %>
+              <ul class="url-list">
+                <% links.forEach(({ shortCode, url, id }) => { const
+                truncatedUrl = url.length >= 30 ? `${url.slice(0, 30)}...` :
+                url; %>
+                <li class="url-item">
+                  <div class="url-info">
+                    <a
+                      href="/<%= shortCode %>"
+                      class="short-url"
+                      target="_blank"
+                    >
+                      <i class="zmdi zmdi-link"></i>
+                      <%= host %>/<%= shortCode %>
+                    </a>
+                    <span class="original-url"><%= truncatedUrl %></span>
+                  </div>
+                </li>
+                <% }); %>
+              </ul>
+              <% } else { %>
+              <p>No shortened URLs available.</p>
+              <% } %>
+            </div>
+          </div>
         </div>
-        <div>
-          <label for="shortCode">Shorten Url:</label>
-          <input type="text" name="shortCode" id="shortCode" />
-        </div>
-        <button type="submit">Shorten</button>
-      </form>
-      <h2>Shortend Urls</h2>
-      <ul>
-        <!-- {{ shortened_urls }} -->
-        <!--  const content = file.toString().replaceAll(
-          "{{ shortened_urls }}",
-          Object.entries(links)
-            .map(
-              ([shortCode, url]) =>
-                `<li><a href="/${shortCode}" target="_blank">${host}/${shortCode}</a> - ${url}</li>`
-            )
-            .join("")
-        ); -->
-      </ul>
-      <% links.map(({shortCode, url}) => { %> <% const truncatedUrl = url.length
-      >= 30 ? `${url.slice(0, 30)}...` : url %>
-      <li>
-        <a href="/<%= shortCode %>" target="_blank">
-          <%=host %>/<%= shortCode%>
-        </a>
-        - <%= truncatedUrl %>
-      </li>
-      <% }) %>
+      </section>
     </div>
-    <!-- <script>
-      const fetchShortendUrl = async () => {
-        const response = await fetch("/links");
-        const links = await response.json();
 
-        const list = document.getElementById("shortend-urls");
-        list.innerHTML = "";
-
-        for (const [shortCode, url] of Object.entries(links)) {
-          const li = document.createElement("li");
-          const truncatedUrl =
-            url.length >= 30 ? `${url.slice(0, 35)}...` : url;
-          li.innerHTML = `<a href="/${shortCode}" target="_blank">${window.location.origin}/${shortCode}</a> - ${truncatedUrl}`;
-          list.appendChild(li);
-        }
-      };
-      document
-        .getElementById("shorten-form")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-
-          const formData = new FormData(event.target);
-          const url = formData.get("url");
-          const shortCode = formData.get("shortCode");
-
-          try {
-            const reponse = await fetch("/shorten", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ url, shortCode }),
-            });
-            if (reponse.ok) {
-              alert("Form Submitted Successfully!");
-              e.target.reset();
-            } else {
-              const errorMessage = await reponse.text();
-              alert(errorMessage);
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        });
-
-      fetchShortendUrl();
-    </script> -->
-    <%- include('./partials/footer') %>
+    <%- include('./partials/footer.ejs') %>
   </body>
 </html>

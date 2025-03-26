@@ -5,7 +5,6 @@ import {
   hashPassword,
   generateToken,
 } from "../services/auth.services.js";
-import jwt from "jsonwebtoken";
 
 export const getRegistrationPage = (req, res) => {
   return res.render("./auth/register");
