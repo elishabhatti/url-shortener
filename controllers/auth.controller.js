@@ -5,6 +5,10 @@ import {
   hashPassword,
   generateToken,
 } from "../services/auth.services.js";
+import {
+  loginUserSchema,
+  registerUserSchema,
+} from "../validators/auth-validator.js";
 
 export const getRegistrationPage = (req, res) => {
   if (req.user) return res.redirect("/");
@@ -13,18 +17,26 @@ export const getRegistrationPage = (req, res) => {
 
 export const getLoginPage = (req, res) => {
   if (req.user) return res.redirect("/");
-  return res.render("./auth/login", {errors: req.flash("errors")});
+  return res.render("./auth/login", { errors: req.flash("errors") });
 };
 
 export const postLogin = async (req, res) => {
   if (req.user) return res.redirect("/");
+  
+  const { data, error } = loginUserSchema.safeParse(req.body);
+  
+  if (error) {
+    const errors = error.errors[0].message;
+    req.flash("errors", errors);
+    res.redirect("/login"); 
+  }
   const { email, password } = req.body;
 
   const userExists = await getUserByEmail(email);
-  if (!userExists){
-    req.flash("errors", "Invalid Password")
+  if (!userExists) {
+    req.flash("errors", "Invalid Password");
     return res.redirect("/login");
-  } 
+  }
 
   const isPasswordValid = await comparePassword(password, userExists.password);
   if (!isPasswordValid) return res.redirect("/login");
@@ -40,7 +52,14 @@ export const postLogin = async (req, res) => {
 
 export const postRegister = async (req, res) => {
   if (req.user) return res.redirect("/");
-  const { name, email, password } = req.body;
+  // const { name, email, password } = req.body;
+  const { data, error } = registerUserSchema.safeParse(req.body);
+
+  if (error) {
+    const errors = error.errors[0].message;
+    req.flash("errors", errors);
+    res.redirect("/register");
+  }
 
   const userExists = await getUserByEmail(email);
   if (userExists) {
