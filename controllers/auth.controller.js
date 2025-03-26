@@ -22,13 +22,13 @@ export const getLoginPage = (req, res) => {
 
 export const postLogin = async (req, res) => {
   if (req.user) return res.redirect("/");
-  
+
   const { data, error } = loginUserSchema.safeParse(req.body);
-  
+
   if (error) {
     const errors = error.errors[0].message;
     req.flash("errors", errors);
-    res.redirect("/login"); 
+    res.redirect("/login");
   }
   const { email, password } = req.body;
 
