@@ -11,16 +11,18 @@ export const postUrlShortner = async (req, res) => {
     const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
     const links = await getShortLinkByShortCode(finalShortCode);
     if (links) {
-      return res
-        .status(400)
-        .send("Chosse Another Name.");
+      return res.status(400).send("Chosse Another Name.");
     }
     try {
       new URL(url);
     } catch (error) {
       return res.status(400).send("Invalid URL.");
     }
-    await insertShortLink({ url, shortCode: finalShortCode, userId: req.user.id });
+    await insertShortLink({
+      url,
+      shortCode: finalShortCode,
+      userId: req.user.id,
+    });
 
     return res.redirect("/");
   } catch (error) {
