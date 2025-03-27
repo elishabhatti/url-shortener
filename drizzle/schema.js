@@ -43,11 +43,19 @@ export const users = mysqlTable("users", {
 
 export const usersRelation = relations(users, ({ many }) => ({
   shortLink: many(shortLink),
+  session: many(sessionsTable),
 }));
 
 export const shortLinksRelation = relations(shortLink, ({ one }) => ({
   user: one(users, {
     fields: [shortLink.userId],
+    references: [users.id],
+  }),
+}));
+
+export const sessionsRelation = relations(sessionsTable, ({ one }) => ({
+  user: one(users, {
+    fields: [sessionsTable.userId], // foregin key
     references: [users.id],
   }),
 }));
