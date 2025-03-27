@@ -2,7 +2,9 @@ import { relations } from "drizzle-orm";
 import {
   serial,
   timestamp,
+  text,
   int,
+  boolean,
   mysqlTable,
   varchar,
 } from "drizzle-orm/mysql-core";
@@ -16,6 +18,18 @@ export const shortLink = mysqlTable("short_link", {
   userId: int("user_id")
     .notNull()
     .references(() => users.id),
+});
+
+export const sessionsTable = mysqlTable("sessions", {
+  id: int().autoincrement().primaryKey(),
+  userId: int("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  valid: boolean().default(true).notNull(),
+  userAgent: text("user_agent"),
+  ip: varchar({ length: 255 }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const users = mysqlTable("users", {
