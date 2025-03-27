@@ -25,6 +25,7 @@ export const postUrlShortner = async (req, res) => {
       shortCode: finalShortCode,
       userId: req.user.id,
     });
+    res.redirect("/")
   } catch (error) {
     console.error(error);
     req.flash("errors", "Internal server error.");

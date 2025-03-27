@@ -52,14 +52,17 @@ export const postLogin = async (req, res) => {
 
 export const postRegister = async (req, res) => {
   if (req.user) return res.redirect("/");
-  // const { name, email, password } = req.body;
+
   const { data, error } = registerUserSchema.safeParse(req.body);
 
   if (error) {
     const errors = error.errors[0].message;
     req.flash("errors", errors);
-    res.redirect("/register");
+    return res.redirect("/register");
   }
+
+  // Ensure 'data' contains the expected values
+  const { name, email, password } = data;
 
   const userExists = await getUserByEmail(email);
   if (userExists) {
@@ -72,6 +75,7 @@ export const postRegister = async (req, res) => {
 
   res.redirect("/login");
 };
+
 
 export const getMe = (req, res) => {
   if (!req.user) return res.send("Not Logged In");
