@@ -60,3 +60,9 @@ export const findShortLinkById = async (id) => {
     .where(eq(shortLink.id, id));
   return result;
 };
+
+// deleteShortCodeById
+export const deleteShortCodeById = async (id) => {
+  const [result] = await db.delete(shortLink).where(eq(shortLink.id, id));
+  return result;
+};
