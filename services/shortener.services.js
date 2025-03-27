@@ -50,7 +50,7 @@ export const getShortLinkByShortCode = async (shortCode) => {
   return result;
 };
 export const insertShortLink = async ({ url, shortCode, userId }) => {
-  await db.insert(shortLink).values({ url, shortCode, userId }); // Use `shortCode`
+  await db.insert(shortLink).values({ url, shortCode, userId });
 };
 
 export const findShortLinkById = async (id) => {
@@ -59,6 +59,12 @@ export const findShortLinkById = async (id) => {
     .from(shortLink)
     .where(eq(shortLink.id, id));
   return result;
+};
+// updateShortCodeById
+export const updateShortCodeById = async ({ id, url, shortCode }) => {
+  await db.update(shortLink) 
+    .set({ url, shortCode })
+    .where(eq(shortLink.id, id));
 };
 
 // deleteShortCodeById

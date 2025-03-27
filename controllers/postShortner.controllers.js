@@ -5,7 +5,8 @@ import {
   getShortLinkByShortCode,
   findShortLinkById,
   insertShortLink,
-  deleteShortCodeById
+  deleteShortCodeById,
+  updateShortCodeById,
 } from "../services/shortener.services.js";
 
 export const postUrlShortner = async (req, res) => {
@@ -99,9 +100,31 @@ export const deleteShortCode = async (req, res) => {
     if (error) return res.redirect("/404");
 
     await deleteShortCodeById(id);
-    res.redirect("/")
+    res.redirect("/");
   } catch (error) {
     console.error(error);
     return res.status(500).send("Inter serval Error");
+  }
+};
+// EditShortCode
+export const EditShortCode = async (req, res) => {
+  if (!req.user) return res.redirect("/login");
+
+  try {
+    const { data: id, error } = z.coerce.number().int().safeParse(req.params.id);
+    if (error) return res.redirect("/404");
+
+    // ✅ Request body se URL aur shortCode fetch karo
+    const { url, shortCode } = req.body;
+    if (!url || !shortCode) {
+      req.flash("errors", "URL and ShortCode are required");
+      return res.redirect(`/edit/${id}`);
+    }
+
+    await updateShortCodeById({ id, url, shortCode });
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error");
   }
 };
