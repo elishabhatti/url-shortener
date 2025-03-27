@@ -23,8 +23,9 @@ app.use(flash());
 app.use(verifyAuthentication);
 app.use((req, res, next) => {
   res.locals.user = req.user;
-  return next();
+  next();
 });
+
 app.set("view engine", "ejs");
 app.set("views", "./views");
 app.use(express.static("public"));

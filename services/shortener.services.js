@@ -52,3 +52,11 @@ export const getShortLinkByShortCode = async (shortCode) => {
 export const insertShortLink = async ({ url, shortCode, userId }) => {
   await db.insert(shortLink).values({ url, shortCode, userId }); // Use `shortCode`
 };
+
+export const findShortLinkById = async (id) => {
+  const [result] = await db
+    .select()
+    .from(shortLink)
+    .where(eq(shortLink.id, id));
+  return result;
+};

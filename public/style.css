@@ -53,9 +53,9 @@ html {
 }
 
 body {
+  font-family: "Poppins";
   letter-spacing: 0.06rem;
   font-size: 1.6rem;
-  font-family: "Poppins";
   line-height: 1.6;
   color: var(--foreground);
   background-color: var(--background);
@@ -76,12 +76,10 @@ a:hover {
 
 button,
 input[type="submit"] {
-  font-family: "Urbanist";
   letter-spacing: 0.06rem;
 }
 
 ::placeholder {
-  font-family: "Urbanist";
   letter-spacing: 0.06rem;
 }
 
@@ -231,7 +229,6 @@ footer .social-links a:hover {
   width: 100%;
   padding: var(--spacing-3) 0 var(--spacing-3) 3rem;
   font-size: 1.6rem;
-  font-family: "Urbanist";
   letter-spacing: 0.1rem;
   border: none;
   border-bottom: 0.1rem solid var(--border);
@@ -1062,7 +1059,6 @@ footer .social-links a:hover {
 
 /* For Material Design Icons */
 .zmdi {
-  font-family: "Material-Design-Iconic-Font", sans-serif;
   display: inline-block;
   font-style: normal;
   font-weight: normal;

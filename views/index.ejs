@@ -20,7 +20,7 @@
         <div class="container">
           <div class="shortener-content">
             <div class="user-status">
-              <% if (user) { %>
+              <% if(user) { %>
               <div class="status-badge success">
                 <i class="zmdi zmdi-check-circle"></i>
                 <span>You are logged in</span>
@@ -73,11 +73,11 @@
 
             <div class="shortened-urls">
               <h2 class="section-title">Shortened URLs</h2>
-              <% if (links && links.length > 0) { %>
+              <% if(links && links.length > 0) { %>
               <ul class="url-list">
-                <% links.forEach(({ shortCode, url, id }) => { const
-                truncatedUrl = url.length >= 30 ? `${url.slice(0, 30)}...` :
-                url; %>
+                <% links.map(({shortCode, url, id}) => { %> <% const
+                truncatedUrl = url.length >= 30 ? `${url.slice(0,30)}...` : url
+                %>
                 <li class="url-item">
                   <div class="url-info">
                     <a
@@ -90,17 +90,60 @@
                     </a>
                     <span class="original-url"><%= truncatedUrl %></span>
                   </div>
+                  <div class="url-actions">
+                    <button
+                      class="copy-btn"
+                      data-url="<%= host %>/<%= shortCode %>"
+                    >
+                      <i class="zmdi zmdi-copy"></i>
+                    </button>
+
+                    <button class="copy-btn edit-btn">
+                      <a href="/edit/<%= id %>">
+                        <i class="zmdi zmdi-edit"></i>
+                      </a>
+                    </button>
+                    
+                    <form action="/delete/<%= id %>" method="post">
+                      <button class="copy-btn edit-btn">
+                        <i class="zmdi zmdi-delete"></i>
+                      </button>
+                    </form>
+                  </div>
                 </li>
-                <% }); %>
+                <% }) %>
               </ul>
               <% } else { %>
-              <p>No shortened URLs available.</p>
+              <p class="empty-list">
+                No shortened URLs yet. Create your first one above!
+              </p>
               <% } %>
             </div>
           </div>
         </div>
       </section>
     </div>
+
     <%- include('./partials/footer.ejs') %>
+
+    <script>
+      // Simple copy to clipboard functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const copyButtons = document.querySelectorAll(".copy-btn");
+
+        copyButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const url = this.getAttribute("data-url");
+            navigator.clipboard.writeText(url).then(() => {
+              // Visual feedback
+              this.innerHTML = '<i class="zmdi zmdi-check"></i>';
+              setTimeout(() => {
+                this.innerHTML = '<i class="zmdi zmdi-copy"></i>';
+              }, 2000);
+            });
+          });
+        });
+      });
+    </script>
   </body>
 </html>
