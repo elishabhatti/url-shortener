@@ -1,10 +1,12 @@
 import express from "express";
-import { shortenedRoutes } from "./routes/shortener.routes.js";
-import { authRouter } from "./routes/auth.routes.js";
 import cookieParser from "cookie-parser";
-import { verifyAuthentication } from "./middlewares/verify-auth-middleware.js";
 import session from "express-session";
 import flash from "connect-flash";
+import requestIp from "request-ip";
+
+import { shortenedRoutes } from "./routes/shortener.routes.js";
+import { authRouter } from "./routes/auth.routes.js";
+import { verifyAuthentication } from "./middlewares/verify-auth-middleware.js";
 
 const app = express();
 const PORT = 3000;
@@ -21,6 +23,7 @@ app.use(
 );
 app.use(flash());
 app.use(verifyAuthentication);
+app.use(requestIp.mw());
 app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
