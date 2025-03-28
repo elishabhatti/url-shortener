@@ -49,12 +49,6 @@ export const createRefreshToken = (sessionId) => {
     expiresIn: ACCESS_TOKEN_EXPIRY / MILLISECONDS_PER_SECOND,
   });
 };
-// export const generateToken = ({ id, name, email }) => {
-//   return jwt.sign({ id, name, email }, process.env.JWT_SECRET, {
-//     expiresIn: "30d",
-//   });
-// };
-
 export const verifyJwtToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };

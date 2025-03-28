@@ -29,39 +29,24 @@ export const getLoginPage = (req, res) => {
 
 export const postLogin = async (req, res) => {
   if (req.user) return res.redirect("/");
-
   const { data, error } = loginUserSchema.safeParse(req.body);
-
   if (error) {
     const errors = error.errors[0].message;
     req.flash("errors", errors);
     res.redirect("/login");
   }
   const { email, password } = req.body;
-
   const userExists = await getUserByEmail(email);
   if (!userExists) {
     req.flash("errors", "Invalid Password");
     return res.redirect("/login");
   }
-
   const isPasswordValid = await comparePassword(password, userExists.password);
   if (!isPasswordValid) return res.redirect("/login");
-
-  // const token = generateToken({
-  //   id: userExists.id,
-  //   name: userExists.name,
-  //   password: userExists.password,
-  // });
-  // res.cookie("access_token", token);
-
-  // we need to create a session
-
   const session = await createSession(userExists.id, {
     ip: req.clientIp,
     userAgent: req.headers["user-agent"],
   });
-
   const accessToken = createAccessToken({
     id: userExists.id,
     name: userExists.name,
@@ -69,19 +54,15 @@ export const postLogin = async (req, res) => {
     sessionId: session.id,
   });
   const refreshToken = createRefreshToken(session.id);
-
   const baseConfig = { httpOnly: true, secure: true };
-
   res.cookie("access_token", accessToken, {
     ...baseConfig,
     maxAge: ACCESS_TOKEN_EXPIRY,
   });
-
   res.cookie("refresh_token", refreshToken, {
     ...baseConfig,
     maxAge: REFRESH_TOKEN_EXPIRY,
   });
-
   res.redirect("/");
 };
 
@@ -95,8 +76,6 @@ export const postRegister = async (req, res) => {
     req.flash("errors", errors);
     return res.redirect("/register");
   }
-
-  // Ensure 'data' contains the expected values
   const { name, email, password } = data;
 
   const userExists = await getUserByEmail(email);

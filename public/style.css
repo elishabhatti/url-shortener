@@ -1056,6 +1056,12 @@ footer .social-links a:hover {
   background-color: #5a6268;
   border-color: #545b62;
 }
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
 
 /* For Material Design Icons */
 .zmdi {

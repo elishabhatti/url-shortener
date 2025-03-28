@@ -8,47 +8,50 @@ import {
   deleteShortCodeById,
   updateShortCodeById,
 } from "../services/shortener.services.js";
+import { shortenerSchema } from "../validators/shortener-validator.js";
 
+export const getShortnerPage = async (req, res) => {
+  try {
+    if (!req.user) return res.redirect("/login");
+    const links = await getAllShortLinks(req.user.id);
+    return res.render("index", {
+      links,
+      host: req.host,
+      errors: req.flash("errors"),
+    });
+  } catch (error) {
+    console.error(error);
+    return res.redirect("/");
+  }
+};
 export const postUrlShortner = async (req, res) => {
   try {
-    const { url, shortCode } = req.body;
-
-    const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
-    const links = await getShortLinkByShortCode(finalShortCode);
-
-    if (links) {
+    if (!req.user) return res.redirect("/login");
+    const { data, error } = shortenerSchema.safeParse(req.body);
+    if (error) {
+      const errorMessage = error.errors[0].message;
+      req.flash("errors", errorMessage);
       return res.redirect("/");
     }
-
+    const { url, shortCode } = data;
+    const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
+    const link = await getShortLinkByShortCode(finalShortCode);
+    if (link) {
+      req.flash(
+        "errors",
+        "Url with that shortcode already exists, please choose another"
+      );
+      return res.redirect("/");
+    }
     await insertShortLink({
       url,
       shortCode: finalShortCode,
       userId: req.user.id,
     });
-    res.redirect("/")
+    return res.redirect("/");
   } catch (error) {
     console.error(error);
-    req.flash("errors", "Internal server error.");
-    return res.redirect("/");
-  }
-};
-
-export const getShortnerPage = async (req, res) => {
-  try {
-    if (!req.user) return res.redirect("/login");
-
-    const links = await getAllShortLinks(req.user.id);
-
-    // Retrieve and clear flash messages
-
-    return res.render("index", {
-      links,
-      host: req.host,
-    });
-  } catch (error) {
-    console.error(error);
-    req.flash("errors", "Internal server error.");
-    return res.redirect("/");
+    return res.status(500).send("Internal server error");
   }
 };
 
@@ -70,7 +73,6 @@ export const redirectToShortLinks = async (req, res) => {
 // getShortenerEditPage
 export const getShortenerEditPage = async (req, res) => {
   if (!req.user) return res.redirect("/login");
-  // const { id } = req.params;
   const { data: id, error } = z.coerce.number().int().safeParse(req.params.id);
   if (error) return res.redirect("/404");
 
@@ -110,12 +112,12 @@ export const deleteShortCode = async (req, res) => {
 // EditShortCode
 export const EditShortCode = async (req, res) => {
   if (!req.user) return res.redirect("/login");
-
   try {
-    const { data: id, error } = z.coerce.number().int().safeParse(req.params.id);
+    const { data: id, error } = z.coerce
+      .number()
+      .int()
+      .safeParse(req.params.id);
     if (error) return res.redirect("/404");
-
-    // ✅ Request body se URL aur shortCode fetch karo
     const { url, shortCode } = req.body;
     if (!url || !shortCode) {
       req.flash("errors", "URL and ShortCode are required");
