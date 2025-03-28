@@ -52,3 +52,52 @@ export const createRefreshToken = (sessionId) => {
 export const verifyJwtToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
+
+export const findSessionById = async (sessionId) => {
+  const [session] = await db
+    .select()
+    .from(sessionsTable)
+    .where(eq(sessionsTable.id, sessionId));
+  return session;
+};
+export const findByUserId = async (userId) => {
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, userId));  // ✅ Correct column
+  return user;
+};
+
+
+export const refreshToken = async (refreshToken) => {
+  try {
+    const decodedToken = verifyJwtToken(refreshToken);
+    const currentSession = await findSessionById(decodedToken.sessionId);
+    if (!currentSession || !currentSession.valid) {
+      throw new Error("Invalid Session");
+    }
+
+    const user = await findByUserId(currentSession.userId);
+    if (!user) throw new Error("Invalid User");
+
+    const userInfo = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      sessionId: currentSession.id, 
+    };
+
+    const newAccessToken = createAccessToken(userInfo);
+    const newRefreshToken = createRefreshToken(currentSession.id);
+
+    return {
+      newAccessToken,
+      newRefreshToken,
+      user,  // ✅ Return user instead of userInfo
+    };
+  } catch (error) {
+    console.error("Error refreshing token:", error.message);
+    throw new Error("Refresh token invalid or expired");
+  }
+};
+
