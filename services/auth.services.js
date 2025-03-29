@@ -2,6 +2,7 @@ import { db } from "../config/db.js";
 import { sessionsTable, users } from "../drizzle/schema.js";
 import { eq } from "drizzle-orm";
 import {
+  REFRESH_TOKEN_EXPIRY,
   ACCESS_TOKEN_EXPIRY,
   MILLISECONDS_PER_SECOND,
 } from "../config/constants.js";
@@ -99,4 +100,31 @@ export const refreshTokens = async (refreshToken) => {
 
 export const clearUserSession = (sessionId) => {
   return db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
+};
+
+export const authenticateUser = async ({ req, res, user }) => {
+  const session = await createSession(user.id, {
+    ip: req.clientIp,
+    userAgent: req.headers["user-agent"],
+  });
+
+  const accessToken = createAccessToken({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    sessionId: session.id,
+  });
+
+  const refreshToken = createRefreshToken(session.id);
+  const baseConfig = { httpOnly: true, secure: true };
+
+  res.cookie("access_token", accessToken, {
+    ...baseConfig,
+    maxAge: ACCESS_TOKEN_EXPIRY,
+  });
+
+  res.cookie("refresh_token", refreshToken, {
+    ...baseConfig,
+    maxAge: REFRESH_TOKEN_EXPIRY,
+  });
 };
