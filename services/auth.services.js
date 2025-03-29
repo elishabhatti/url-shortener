@@ -13,6 +13,7 @@ export const getUserByEmail = async (email) => {
   const [user] = await db.select().from(users).where(eq(users.email, email));
   return user;
 };
+
 export const createUser = async ({ name, email, password }) => {
   return await db
     .insert(users)
@@ -23,9 +24,15 @@ export const createUser = async ({ name, email, password }) => {
 export const hashPassword = async (password) => {
   return await argon2.hash(password);
 };
+
 export const comparePassword = async (password, hash) => {
   return await argon2.verify(hash, password);
 };
+
+export const verifyJwtToken = (token) => {
+  return jwt.verify(token, process.env.JWT_SECRET);
+};
+
 export const createSession = async (userId, { ip, userAgent }) => {
   const [session] = await db
     .insert(sessionsTable)
@@ -44,13 +51,11 @@ export const createAccessToken = ({ id, name, email, sessionId }) => {
     expiresIn: ACCESS_TOKEN_EXPIRY / MILLISECONDS_PER_SECOND,
   });
 };
+
 export const createRefreshToken = (sessionId) => {
   return jwt.sign({ sessionId }, process.env.JWT_SECRET, {
     expiresIn: ACCESS_TOKEN_EXPIRY / MILLISECONDS_PER_SECOND,
   });
-};
-export const verifyJwtToken = (token) => {
-  return jwt.verify(token, process.env.JWT_SECRET);
 };
 
 export const findSessionById = async (sessionId) => {
@@ -60,14 +65,11 @@ export const findSessionById = async (sessionId) => {
     .where(eq(sessionsTable.id, sessionId));
   return session;
 };
+
 export const findByUserId = async (userId) => {
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, userId));  // ✅ Correct column
+  const [user] = await db.select().from(users).where(eq(users.id, userId)); // ✅ Correct column
   return user;
 };
-
 
 export const refreshToken = async (refreshToken) => {
   try {
@@ -84,7 +86,7 @@ export const refreshToken = async (refreshToken) => {
       id: user.id,
       name: user.name,
       email: user.email,
-      sessionId: currentSession.id, 
+      sessionId: currentSession.id,
     };
 
     const newAccessToken = createAccessToken(userInfo);
@@ -93,11 +95,10 @@ export const refreshToken = async (refreshToken) => {
     return {
       newAccessToken,
       newRefreshToken,
-      user,  // ✅ Return user instead of userInfo
+      user,
     };
   } catch (error) {
     console.error("Error refreshing token:", error.message);
     throw new Error("Refresh token invalid or expired");
   }
 };
-
