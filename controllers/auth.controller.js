@@ -10,6 +10,7 @@ import {
   createAccessToken,
   createRefreshToken,
   createSession,
+  clearUserSession,
   // generateToken,
 } from "../services/auth.services.js";
 import {
