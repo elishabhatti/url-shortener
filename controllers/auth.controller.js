@@ -105,7 +105,10 @@ export const getMe = (req, res) => {
   return res.send(`Hey ${req.user.name}`);
 };
 
-export const logoutUser = (req, res) => {
+export const logoutUser = async (req, res) => {
+  await clearUserSession(req.user.sessionId)
+
   res.clearCookie("access_token");
+  res.clearCookie("refresh_token");
   res.redirect("/login");
 };

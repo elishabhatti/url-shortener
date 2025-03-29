@@ -61,13 +61,9 @@ export const findSessionById = async (sessionId) => {
   return session;
 };
 export const findByUserId = async (userId) => {
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, userId));  // ✅ Correct column
+  const [user] = await db.select().from(users).where(eq(users.id, userId)); // ✅ Correct column
   return user;
 };
-
 
 export const refreshTokens = async (refreshToken) => {
   try {
@@ -84,7 +80,7 @@ export const refreshTokens = async (refreshToken) => {
       id: user.id,
       name: user.name,
       email: user.email,
-      sessionId: currentSession.id, 
+      sessionId: currentSession.id,
     };
 
     const newAccessToken = createAccessToken(userInfo);
@@ -93,7 +89,7 @@ export const refreshTokens = async (refreshToken) => {
     return {
       newAccessToken,
       newRefreshToken,
-      user,  // ✅ Return user instead of userInfo
+      user, // ✅ Return user instead of userInfo
     };
   } catch (error) {
     console.error("Error refreshing token:", error);
@@ -101,3 +97,6 @@ export const refreshTokens = async (refreshToken) => {
   }
 };
 
+export const clearUserSession = (sessionId) => {
+  return db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
+};
