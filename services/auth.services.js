@@ -1,5 +1,5 @@
 import { db } from "../config/db.js";
-import { sessionsTable, users } from "../drizzle/schema.js";
+import { sessionsTable, shortLink, users } from "../drizzle/schema.js";
 import { eq } from "drizzle-orm";
 import {
   REFRESH_TOKEN_EXPIRY,
@@ -102,7 +102,7 @@ export const clearUserSession = (sessionId) => {
   return db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
 };
 
-export const authenticateUser = async ({ req, res, user }) => {
+export const authenticateUser = async ({ req, res, user, name, email }) => {
   const session = await createSession(user.id, {
     ip: req.clientIp,
     userAgent: req.headers["user-agent"],
@@ -110,8 +110,8 @@ export const authenticateUser = async ({ req, res, user }) => {
 
   const accessToken = createAccessToken({
     id: user.id,
-    name: user.name,
-    email: user.email,
+    name: user.name || name,
+    email: user.email || email,
     sessionId: session.id,
   });
 
@@ -127,4 +127,11 @@ export const authenticateUser = async ({ req, res, user }) => {
     ...baseConfig,
     maxAge: REFRESH_TOKEN_EXPIRY,
   });
+};
+
+export const getAllShortLinks = async (userId) => {
+  return await db
+  .select()
+  .from(shortLink)
+  .where(eq(shortLink.id, userId));
 };

@@ -1,17 +1,12 @@
 import {
-  ACCESS_TOKEN_EXPIRY,
-  REFRESH_TOKEN_EXPIRY,
-} from "../config/constants.js";
-import {
   getUserByEmail,
   createUser,
   comparePassword,
   hashPassword,
-  createAccessToken,
-  createRefreshToken,
-  createSession,
   clearUserSession,
   authenticateUser,
+  findByUserId,
+  getAllShortLinks,
   // generateToken,
 } from "../services/auth.services.js";
 import {
@@ -96,4 +91,23 @@ export const logoutUser = async (req, res) => {
   res.clearCookie("access_token");
   res.clearCookie("refresh_token");
   res.redirect("/login");
+};
+
+// getProfilePage
+export const getProfilePage = async (req, res) => {
+  if (!req.user) return res.redirect("/login");
+
+  const user = await findByUserId(req.user.id);
+  if (!user) return res.redirect("/login");
+
+  const userShortLinks = await getAllShortLinks(user.id);
+
+  return res.render("auth/profile", {
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
+    },
+  });
 };
