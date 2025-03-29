@@ -108,6 +108,7 @@ export const getProfilePage = async (req, res) => {
       name: user.name,
       email: user.email,
       createdAt: user.createdAt,
+      links: userShortLinks,
     },
   });
 };

@@ -133,5 +133,5 @@ export const getAllShortLinks = async (userId) => {
   return await db
   .select()
   .from(shortLink)
-  .where(eq(shortLink.id, userId));
+  .where(eq(shortLink.userId, userId));
 };
