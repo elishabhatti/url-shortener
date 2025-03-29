@@ -1,4 +1,5 @@
-import { verifyJwtToken } from "../services/auth.services.js";
+import { verifyJwtToken,refreshTokens  } from "../services/auth.services.js";
+import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from "../config/constants.js";
 
 export const verifyAuthentication = async (req, res, next) => {
   const accessToken = req.cookies.access_token;
@@ -16,13 +17,13 @@ export const verifyAuthentication = async (req, res, next) => {
       req.user = decodedToken;
       return next();
     } catch (error) {
-      console.error("Access token invalid:", error.message);
+      console.error("Access token invalid:", error);
     }
   }
 
   if (refreshToken) {
     try {
-      const { newAccessToken, newRefreshToken, user } = await refreshToken(
+      const { newAccessToken, newRefreshToken, user } = await refreshTokens(
         refreshToken
       );
       req.user = user;
@@ -41,7 +42,7 @@ export const verifyAuthentication = async (req, res, next) => {
 
       return next();
     } catch (error) {
-      console.error("Refresh token invalid:", error.message);
+      console.error("Refresh token invalid:", error);
     }
   }
 
