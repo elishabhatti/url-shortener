@@ -7,6 +7,7 @@ import {
   postRegister,
   logoutUser,
   getProfilePage,
+  getVerifyEmailPage,
 } from "../controllers/auth.controller.js";
 
 const router = Router();
@@ -15,6 +16,7 @@ const router = Router();
 router.route("/login").get(getLoginPage).post(postLogin);
 router.route("/register").get(getRegistrationPage).post(postRegister);
 router.route("/profile").get(getProfilePage)
+router.route("/verify-email").get(getVerifyEmailPage)
 router.route("/me").get(getMe);
 router.route("/logout").get(logoutUser);
 
