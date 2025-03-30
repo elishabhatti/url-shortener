@@ -33,7 +33,7 @@ export const sessionsTable = mysqlTable("sessions", {
 });
 
 export const verifyEmailTokensTable = mysqlTable("is_email_valid", {
-  id: int().autoincrement().notNull(),
+  id: int().autoincrement().primaryKey(),
   userId: int("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
