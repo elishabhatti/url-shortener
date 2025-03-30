@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   serial,
   timestamp,
@@ -30,6 +30,18 @@ export const sessionsTable = mysqlTable("sessions", {
   ip: varchar({ length: 255 }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const verifyEmailTokensTable = mysqlTable("is_email_valid", {
+  id: int().autoincrement().notNull(),
+  userId: int("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  token: varchar({ length: 8 }).notNull(),
+  expiresAt: timestamp("expires_at")
+    .default(sql`(CURRENT_TIMESTAMP + INTERVAL 1 DAY)`)
+    .notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const users = mysqlTable("users", {
