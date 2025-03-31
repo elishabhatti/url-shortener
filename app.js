@@ -9,7 +9,7 @@ import { authRouter } from "./routes/auth.routes.js";
 import { verifyAuthentication } from "./middlewares/verify-auth-middleware.js";
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

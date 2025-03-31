@@ -75,11 +75,7 @@ export const findByUserId = async (userId) => {
 export const refreshTokens = async (refreshToken) => {
   try {
     const decodedToken = verifyJwtToken(refreshToken);
-    console.log("Decoded Token:", decodedToken);
-
     const currentSession = await findSessionById(decodedToken.sessionId);
-    console.log("Current Session:", currentSession);
-
     if (!currentSession || !currentSession.valid) {
       throw new Error("Invalid Session");
     }
@@ -101,14 +97,13 @@ export const refreshTokens = async (refreshToken) => {
     return {
       newAccessToken,
       newRefreshToken,
-      user,
+      user, // ✅ Return user instead of userInfo
     };
   } catch (error) {
-    console.error("Error refreshing token:", error.message);
+    console.error("Error refreshing token:", error);
     throw new Error("Refresh token invalid or expired");
   }
 };
-
 
 export const clearUserSession = (sessionId) => {
   return db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
