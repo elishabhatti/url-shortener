@@ -9,7 +9,7 @@ import {
   getAllShortLinks,
   generateRandomToken,
   insertVerifyEmailToken,
-  createVerifyEmailLink,  
+  createVerifyEmailLink,
   // generateToken,
 } from "../services/auth.services.js";
 import {
@@ -136,4 +136,16 @@ export const resendVerificationLink = async (req, res) => {
     email: req.user.email,
     token: randomToken,
   });
+
+  sendEmail({
+    to: req.user.email,
+    subject: "Verify your email",
+    html: `
+    <h1>Click the link below to verify your email</h1>
+    <p>You can use this token: <code>${randomToken}</code></p>
+    <a href="${verifyEmailLink}">Verify Email</a>
+    `,
+  }).catch((error) => console.error(error));
+
+  res.redirect("/verify-email");
 };
