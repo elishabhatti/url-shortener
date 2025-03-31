@@ -1,5 +1,10 @@
 import { db } from "../config/db.js";
-import { sessionsTable, shortLink, users } from "../drizzle/schema.js";
+import {
+  sessionsTable,
+  shortLink,
+  users,
+  verifyEmailTokensTable,
+} from "../drizzle/schema.js";
 import { eq } from "drizzle-orm";
 import {
   REFRESH_TOKEN_EXPIRY,
@@ -8,6 +13,7 @@ import {
 } from "../config/constants.js";
 
 import argon2 from "argon2";
+import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
 export const getUserByEmail = async (email) => {
@@ -133,4 +139,18 @@ export const authenticateUser = async ({ req, res, user, name, email }) => {
 
 export const getAllShortLinks = async (userId) => {
   return await db.select().from(shortLink).where(eq(shortLink.userId, userId));
+};
+
+export const generateRandomToken = async (digit = 8) => {
+  const min = 10 ** (digit - 1);
+  const max = 10 ** digit;
+
+  return crypto.randomInt(min, max).toString();
+};
+
+export const insertVerifyEmailToken = async ({ userId, token }) => {
+  await db
+    .delete(verifyEmailTokensTable)
+    .where(lt(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`));
+  await db.insert(verifyEmailTokensTable).values({ userId, token });
 };

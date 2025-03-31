@@ -7,6 +7,8 @@ import {
   authenticateUser,
   findByUserId,
   getAllShortLinks,
+  generateRandomToken,
+  insertVerifyEmailToken,
   // generateToken,
 } from "../services/auth.services.js";
 import {
@@ -115,6 +117,18 @@ export const getProfilePage = async (req, res) => {
 };
 
 export const getVerifyEmailPage = async (req, res) => {
-  if (!req.user || req.user.isEmailValid) return res.redirect("/");
+  const user = await findByUserId(req.user.id);
+  if (!user || user.isEmailValid) return res.redirect("/");
   return res.render("auth/verify-email", { email: req.user.email });
+};
+
+export const resendVerificationLink = async (req, res) => {
+  if (!req.user) return res.redirect("/");
+  const user = await findByUserId(req.user.id);
+  if (!user || user.isEmailValid) return res.redirect("/");
+
+  const randomToken = generateRandomToken()
+
+  await insertVerifyEmailToken({userId: req.user.id, token: randomToken})
+  
 };
