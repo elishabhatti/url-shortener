@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "731bb222-077b-4479-9c52-9f7464689d61",
+  "id": "0d1dad7e-abef-4359-8182-b0b74f30130d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "sessions": {
@@ -9,14 +9,14 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": true
         },
         "user_id": {
           "name": "user_id",
-          "type": "bigint",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -57,6 +57,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
+          "onUpdate": true,
           "default": "(now())"
         }
       },
@@ -92,7 +93,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": true
@@ -125,11 +126,12 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
+          "onUpdate": true,
           "default": "(now())"
         },
         "user_id": {
           "name": "user_id",
-          "type": "bigint",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -147,7 +149,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -174,7 +176,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": true
@@ -222,6 +224,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
+          "onUpdate": true,
           "default": "(now())"
         }
       },
@@ -245,19 +248,19 @@
       },
       "checkConstraint": {}
     },
-    "verify_email_tokens": {
-      "name": "verify_email_tokens",
+    "is_email_valid": {
+      "name": "is_email_valid",
       "columns": {
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": true
         },
         "user_id": {
           "name": "user_id",
-          "type": "bigint",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -288,9 +291,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "verify_email_tokens_user_id_users_id_fk": {
-          "name": "verify_email_tokens_user_id_users_id_fk",
-          "tableFrom": "verify_email_tokens",
+        "is_email_valid_user_id_users_id_fk": {
+          "name": "is_email_valid_user_id_users_id_fk",
+          "tableFrom": "is_email_valid",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
@@ -303,8 +306,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "verify_email_tokens_id": {
-          "name": "verify_email_tokens_id",
+        "is_email_valid_id": {
+          "name": "is_email_valid_id",
           "columns": [
             "id"
           ]

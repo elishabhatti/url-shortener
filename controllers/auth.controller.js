@@ -9,6 +9,7 @@ import {
   getAllShortLinks,
   generateRandomToken,
   insertVerifyEmailToken,
+  createVerifyEmailLink,  
   // generateToken,
 } from "../services/auth.services.js";
 import {
@@ -127,8 +128,12 @@ export const resendVerificationLink = async (req, res) => {
   const user = await findByUserId(req.user.id);
   if (!user || user.isEmailValid) return res.redirect("/");
 
-  const randomToken = generateRandomToken()
+  const randomToken = generateRandomToken();
 
-  await insertVerifyEmailToken({userId: req.user.id, token: randomToken})
-  
+  await insertVerifyEmailToken({ userId: req.user.id, token: randomToken });
+
+  const verifyEmailLink = await createVerifyEmailLink({
+    email: req.user.email,
+    token: randomToken,
+  });
 };

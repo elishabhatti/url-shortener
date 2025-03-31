@@ -5,7 +5,7 @@ import {
   users,
   verifyEmailTokensTable,
 } from "../drizzle/schema.js";
-import { eq } from "drizzle-orm";
+import { eq, lt, sql } from "drizzle-orm";
 import {
   REFRESH_TOKEN_EXPIRY,
   ACCESS_TOKEN_EXPIRY,
@@ -75,7 +75,11 @@ export const findByUserId = async (userId) => {
 export const refreshTokens = async (refreshToken) => {
   try {
     const decodedToken = verifyJwtToken(refreshToken);
+    console.log("Decoded Token:", decodedToken);
+
     const currentSession = await findSessionById(decodedToken.sessionId);
+    console.log("Current Session:", currentSession);
+
     if (!currentSession || !currentSession.valid) {
       throw new Error("Invalid Session");
     }
@@ -97,13 +101,14 @@ export const refreshTokens = async (refreshToken) => {
     return {
       newAccessToken,
       newRefreshToken,
-      user, // ✅ Return user instead of userInfo
+      user,
     };
   } catch (error) {
-    console.error("Error refreshing token:", error);
+    console.error("Error refreshing token:", error.message);
     throw new Error("Refresh token invalid or expired");
   }
 };
+
 
 export const clearUserSession = (sessionId) => {
   return db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
@@ -153,4 +158,9 @@ export const insertVerifyEmailToken = async ({ userId, token }) => {
     .delete(verifyEmailTokensTable)
     .where(lt(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`));
   await db.insert(verifyEmailTokensTable).values({ userId, token });
+};
+
+export const createVerifyEmailLink = async ({ email, token }) => {
+  const uriEncodedEmail = encodedURIComponent(email);
+  return `${process.env.FRONTEND_URL}/verify-email-token?token=${token}$email=${uriEncodedEmail}`;
 };
