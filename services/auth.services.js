@@ -149,14 +149,21 @@ export const generateRandomToken = (digit = 8) => {
 };
 
 export const insertVerifyEmailToken = async ({ userId, token }) => {
-  try {
-    await db
-      .delete(verifyEmailTokensTable)
-      .where(lt(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`));
-    await db.insert(verifyEmailTokensTable).values({ userId, token });
-  } catch (error) {
-    console.error(error);
-  }
+  return db.transaction(async (tx) => {
+    try {
+      await tx
+        .delete(verifyEmailTokensTable)
+        .where(lt(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`));
+      await tx
+        .delete(verifyEmailTokensTable)
+        .where(lt(verifyEmailTokensTable.userId, userId));
+        
+      await db.insert(verifyEmailTokensTable).values({ userId, token });
+    } catch (error) {
+      console.error("Failed to insert verification token", error);
+      throw new Error("Unable to create verification token");
+    }
+  });
 };
 
 export const createVerifyEmailLink = async ({ email, token }) => {
