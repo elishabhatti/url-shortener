@@ -141,7 +141,7 @@ export const getAllShortLinks = async (userId) => {
   return await db.select().from(shortLink).where(eq(shortLink.userId, userId));
 };
 
-export const generateRandomToken = async (digit = 8) => {
+export const generateRandomToken = (digit = 8) => {
   const min = 10 ** (digit - 1);
   const max = 10 ** digit;
 
@@ -149,13 +149,17 @@ export const generateRandomToken = async (digit = 8) => {
 };
 
 export const insertVerifyEmailToken = async ({ userId, token }) => {
-  await db
-    .delete(verifyEmailTokensTable)
-    .where(lt(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`));
-  await db.insert(verifyEmailTokensTable).values({ userId, token });
+  try {
+    await db
+      .delete(verifyEmailTokensTable)
+      .where(lt(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`));
+    await db.insert(verifyEmailTokensTable).values({ userId, token });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const createVerifyEmailLink = async ({ email, token }) => {
-  const uriEncodedEmail = encodedURIComponent(email);
+  const uriEncodedEmail = encodeURIComponent(email);
   return `${process.env.FRONTEND_URL}/verify-email-token?token=${token}$email=${uriEncodedEmail}`;
 };
