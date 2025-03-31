@@ -157,8 +157,8 @@ export const insertVerifyEmailToken = async ({ userId, token }) => {
       await tx
         .delete(verifyEmailTokensTable)
         .where(lt(verifyEmailTokensTable.userId, userId));
-        
-      await db.insert(verifyEmailTokensTable).values({ userId, token });
+
+      await tx.insert(verifyEmailTokensTable).values({ userId, token });
     } catch (error) {
       console.error("Failed to insert verification token", error);
       throw new Error("Unable to create verification token");
@@ -166,7 +166,15 @@ export const insertVerifyEmailToken = async ({ userId, token }) => {
   });
 };
 
+// export const createVerifyEmailLink = async ({ email, token }) => {
+//   const uriEncodedEmail = encodeURIComponent(email);
+//   return `${process.env.FRONTEND_URL}/verify-email-token?token=${token}$email=${uriEncodedEmail}`;
+// };
+
 export const createVerifyEmailLink = async ({ email, token }) => {
-  const uriEncodedEmail = encodeURIComponent(email);
-  return `${process.env.FRONTEND_URL}/verify-email-token?token=${token}$email=${uriEncodedEmail}`;
+  const url = new URL(`${process.env.FRONTEND_URL}/verify-email-token`);
+  url.searchParams.append("token", token);
+  url.searchParams.append("email", email);
+
+  return url.toString();
 };
