@@ -16,7 +16,7 @@ export const shortLink = mysqlTable("short_link", {
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   userId: int("user_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }), // ✅ Auto-delete related records
+    .references(() => users.id, { onDelete: "cascade" }),
 });
 
 

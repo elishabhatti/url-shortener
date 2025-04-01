@@ -150,3 +150,8 @@ export const resendVerificationLink = async (req, res) => {
 
   res.redirect("/verify-email");
 };
+
+
+export const verifyEmailToken = async (req, res) => {
+  
+}
