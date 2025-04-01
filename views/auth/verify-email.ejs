@@ -63,15 +63,16 @@
                 >Enter 8-Digit Verification Code:</label
               >
               <input
-                type="text"
-                name="token"
-                id="token"
-                class="form-control"
-                maxlength="8"
-                required
-                pattern="\d{8}"
-                title="Please enter an 8-digit number"
-              />
+              type="text"
+              name="token"
+              id="token"
+              class="form-control"
+              maxlength="8"
+              required
+              pattern="[0-9]{8}"
+              title="Please enter an 8-digit number"
+            />
+            
             </div>
 
             <input type="hidden" value="<%= email %>" name="email" />
