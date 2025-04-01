@@ -167,7 +167,8 @@ export const verifyEmailToken = async (req, res) => {
 
   await verifyUserEmailAndUpdate(token.email);
 
-  clearVerifyEmailTokens(token.email).catch(console.error(error));
+  // clearVerifyEmailTokens(token.email).catch(console.error(error));
+  clearVerifyEmailTokens(token.userId).catch(console.error(error));
 
   return res.redirect("/profile");
 };

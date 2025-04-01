@@ -145,9 +145,11 @@ export const generateRandomToken = (digit = 8) => {
   const min = 10 ** (digit - 1);
   const max = 10 ** digit - 1;
 
-  return crypto.randomInt(min, max + 1).toString().padStart(digit, "0");
+  return crypto
+    .randomInt(min, max + 1)
+    .toString()
+    .padStart(digit, "0");
 };
-
 
 export const insertVerifyEmailToken = async ({ userId, token }) => {
   return db.transaction(async (tx) => {
@@ -218,7 +220,6 @@ export const findVerificationEmailToken = async ({ token, email }) => {
   };
 };
 
-
 export const verifyUserEmailAndUpdate = async (email) => {
   return db
     .update(users)
@@ -226,9 +227,9 @@ export const verifyUserEmailAndUpdate = async (email) => {
     .where(eq(users.email, email));
 };
 
-export const clearVerifyEmailTokens = async (email) => {
-  const [user] = await db.select().from(users).where(eq(users.email, email));
+export const clearVerifyEmailTokens = async (userId) => {
+  // const [user] = await db.select().from(users).where(eq(users.email, email));
   return await db
     .delete(verifyEmailTokensTable)
-    .where(eq(verifyEmailTokensTable.userId, user.id));
+    .where(eq(verifyEmailTokensTable.userId, userId));
 };
