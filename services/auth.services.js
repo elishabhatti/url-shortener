@@ -143,9 +143,9 @@ export const getAllShortLinks = async (userId) => {
 
 export const generateRandomToken = (digit = 8) => {
   const min = 10 ** (digit - 1);
-  const max = 10 ** digit;
+  const max = 10 ** digit - 1;
 
-  return crypto.randomInt(min, max).toString();
+  return crypto.randomInt(min, max + 1).toString(); 
 };
 
 export const insertVerifyEmailToken = async ({ userId, token }) => {
