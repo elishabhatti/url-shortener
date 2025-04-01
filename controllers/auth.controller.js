@@ -11,11 +11,15 @@ import {
   generateRandomToken,
   insertVerifyEmailToken,
   createVerifyEmailLink,
+  findVerificationEmailToken,
+  verifyUserEmailAndUpdate,
+  clearVerifyEmailTokens,
   // generateToken,
 } from "../services/auth.services.js";
 import {
   loginUserSchema,
   registerUserSchema,
+  verifyEmailSchema,
 } from "../validators/auth-validator.js";
 
 export const getRegistrationPage = (req, res) => {
@@ -151,7 +155,19 @@ export const resendVerificationLink = async (req, res) => {
   res.redirect("/verify-email");
 };
 
-
 export const verifyEmailToken = async (req, res) => {
-  
-}
+  const { data, error } = verifyEmailSchema.safeParse(req.query);
+  if (error) {
+    return res.send("Verification link invalid or expired!");
+  }
+
+  const token = await findVerificationEmailToken(data);
+  console.log("Verification Token", token);
+  if (!token) res.send("Verification link invalid or expired!");
+
+  await verifyUserEmailAndUpdate(token.email);
+
+  clearVerifyEmailTokens(token.email).catch(console.error(error));
+
+  return res.redirect("/profile");
+};
