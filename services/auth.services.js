@@ -252,3 +252,24 @@ export const clearVerifyEmailTokens = async (userId) => {
     .delete(verifyEmailTokensTable)
     .where(eq(verifyEmailTokensTable.userId, userId));
 };
+
+export const sendNewVerifyEmailLink = async ({ userId, email }) => {
+  const randomToken = generateRandomToken();
+
+  await insertVerifyEmailToken({ userId, token: randomToken });
+
+  const verifyEmailLink = await createVerifyEmailLink({
+    email,
+    token: randomToken,
+  });
+
+  sendEmail({
+    to: email,
+    subject: "Verify your email",
+    html: `
+      <h1>Click the link below to verify your email</h1>
+      <p>You can use this token: <code>${randomToken}</code></p>
+      <a href="${verifyEmailLink}">Verify Email</a>
+      `,
+  }).catch((error) => console.error(error));
+};
