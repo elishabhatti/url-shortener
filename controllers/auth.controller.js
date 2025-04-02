@@ -59,6 +59,10 @@ export const postLogin = async (req, res) => {
 
   await authenticateUser({ req, res, user: userExists });
 
+  if (!user.isEmailValid) {
+    return await sendNewVerifyEmailLink({ email, userId: userExists.id });
+  }
+
   res.redirect("/");
 };
 

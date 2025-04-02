@@ -51,11 +51,13 @@ export const createAccessToken = ({ id, name, email, sessionId }) => {
     expiresIn: ACCESS_TOKEN_EXPIRY / MILLISECONDS_PER_SECOND,
   });
 };
+
 export const createRefreshToken = (sessionId) => {
   return jwt.sign({ sessionId }, process.env.JWT_SECRET, {
     expiresIn: ACCESS_TOKEN_EXPIRY / MILLISECONDS_PER_SECOND,
   });
 };
+
 export const verifyJwtToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
@@ -82,7 +84,6 @@ export const refreshTokens = async (refreshToken) => {
 
     const user = await findByUserId(currentSession.userId);
     if (!user) throw new Error("Invalid User");
-
 
     const userInfo = {
       id: user.id,
