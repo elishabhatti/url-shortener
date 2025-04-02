@@ -232,11 +232,11 @@ export const findVerificationEmailToken = async ({ token, email }) => {
     .where(
       and(
         eq(verifyEmailTokensTable.token, token),
-        gte(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`),
-        eq(users.id, userId)
+        eq(users.email, email),
+        gte(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`)
       )
     )
-    .innerJoin(users, eq((verifyEmailTokensTable.userId, users.id)));
+    .innerJoin(users, eq(verifyEmailTokensTable.userId, users.id));
 };
 
 export const verifyUserEmailAndUpdate = async (email) => {
