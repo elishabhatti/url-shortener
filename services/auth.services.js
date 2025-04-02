@@ -11,7 +11,7 @@ import {
   ACCESS_TOKEN_EXPIRY,
   MILLISECONDS_PER_SECOND,
 } from "../config/constants.js";
-
+import { sendEmail } from "../lib/nodemailer.js";
 import argon2 from "argon2";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
@@ -82,6 +82,7 @@ export const refreshTokens = async (refreshToken) => {
 
     const user = await findByUserId(currentSession.userId);
     if (!user) throw new Error("Invalid User");
+
 
     const userInfo = {
       id: user.id,

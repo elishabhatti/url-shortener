@@ -82,11 +82,11 @@ export const postRegister = async (req, res) => {
   }
 
   const hashedPassword = await hashPassword(password);
-  const user = await createUser({ name, email, password: hashedPassword });
+  const [user] = await createUser({ name, email, password: hashedPassword });
 
   await authenticateUser({ req, res, user });
 
-  await sendNewVerifyEmailLink({ email: req.user.email, userId: req.user.id });
+  await sendNewVerifyEmailLink({ email, userId: user.id });
 
   res.redirect("/");
 };
