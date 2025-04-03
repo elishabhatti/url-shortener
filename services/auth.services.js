@@ -16,6 +16,7 @@ import {
 import { sendEmail } from "../lib/nodemailer.js";
 import argon2 from "argon2";
 import crypto from "crypto";
+import ejs from "ejs"
 import jwt from "jsonwebtoken";
 import mjml2html from "mjml";
 
@@ -269,7 +270,7 @@ export const sendNewVerifyEmailLink = async ({ userId, email }) => {
   });
 
   const mjmlTemplate = await fs.readFile(
-    path.join(import.meta.dirname, "..", "emails", "verify-email.mjml")
+    path.join(import.meta.dirname, "..", "emails", "verify-email.mjml",),"utf-8"
   );
 
   const filledTemplate = ejs.render(mjmlTemplate, {
