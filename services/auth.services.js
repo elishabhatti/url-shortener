@@ -6,6 +6,8 @@ import {
   verifyEmailTokensTable,
 } from "../drizzle/schema.js";
 import { and, eq, gte, lt, sql } from "drizzle-orm";
+import path from "path";
+import fs from "fs/promises";
 import {
   REFRESH_TOKEN_EXPIRY,
   ACCESS_TOKEN_EXPIRY,
@@ -15,6 +17,7 @@ import { sendEmail } from "../lib/nodemailer.js";
 import argon2 from "argon2";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import mjml2html from "mjml";
 
 export const getUserByEmail = async (email) => {
   const [user] = await db.select().from(users).where(eq(users.email, email));
@@ -265,13 +268,20 @@ export const sendNewVerifyEmailLink = async ({ userId, email }) => {
     token: randomToken,
   });
 
+  const mjmlTemplate = await fs.readFile(
+    path.join(import.meta.dirname, "..", "emails", "verify-email.mjml")
+  );
+
+  const filledTemplate = ejs.render(mjmlTemplate, {
+    code: randomToken,
+    link: verifyEmailLink,
+  });
+
+  const htmlOutput = mjml2html(filledTemplate).html;
+
   sendEmail({
     to: email,
     subject: "Verify your email",
-    html: `
-      <h1>Click the link below to verify your email</h1>
-      <p>You can use this token: <code>${randomToken}</code></p>
-      <a href="${verifyEmailLink}">Verify Email</a>
-      `,
+    html: htmlOutput,
   }).catch((error) => console.error(error));
 };
