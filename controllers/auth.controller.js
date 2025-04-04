@@ -1,4 +1,3 @@
-import { sendEmail } from "../lib/nodemailer.js";
 import {
   getUserByEmail,
   createUser,
@@ -91,7 +90,6 @@ export const postRegister = async (req, res) => {
   await authenticateUser({ req, res, user });
 
   await sendNewVerifyEmailLink({ email, userId: user.id });
-
   res.redirect("/");
 };
 

@@ -13,10 +13,11 @@ import {
   ACCESS_TOKEN_EXPIRY,
   MILLISECONDS_PER_SECOND,
 } from "../config/constants.js";
-import { sendEmail } from "../lib/nodemailer.js";
+// import { sendEmail } from "../lib/nodemailer.js";
+import { sendEmail } from "../lib/send-email.js";
 import argon2 from "argon2";
 import crypto from "crypto";
-import ejs from "ejs"
+import ejs from "ejs";
 import jwt from "jsonwebtoken";
 import mjml2html from "mjml";
 
@@ -259,7 +260,7 @@ export const clearVerifyEmailTokens = async (userId) => {
     .where(eq(verifyEmailTokensTable.userId, userId));
 };
 
-export const sendNewVerifyEmailLink = async ({ userId, email }) => {
+export const sendNewVerifyEmailLink = async ({ email, userId }) => {
   const randomToken = generateRandomToken();
 
   await insertVerifyEmailToken({ userId, token: randomToken });
@@ -270,7 +271,8 @@ export const sendNewVerifyEmailLink = async ({ userId, email }) => {
   });
 
   const mjmlTemplate = await fs.readFile(
-    path.join(import.meta.dirname, "..", "emails", "verify-email.mjml",),"utf-8"
+    path.join(import.meta.dirname, "..", "emails", "verify-email.mjml"),
+    "utf-8"
   );
 
   const filledTemplate = ejs.render(mjmlTemplate, {
@@ -279,6 +281,7 @@ export const sendNewVerifyEmailLink = async ({ userId, email }) => {
   });
 
   const htmlOutput = mjml2html(filledTemplate).html;
+  console.log("Email", email, "userId", userId);
 
   sendEmail({
     to: email,
