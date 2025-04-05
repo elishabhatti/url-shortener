@@ -11,6 +11,7 @@ import {
   resendVerificationLink,
   verifyEmailToken,
   getEditProfilePage,
+  postEditProfile,
 } from "../controllers/auth.controller.js";
 
 const router = Router();
@@ -22,7 +23,7 @@ router.route("/profile").get(getProfilePage);
 router.route("/verify-email").get(getVerifyEmailPage);
 router.route("/resend-verification-link").post(resendVerificationLink);
 router.route("/verify-email-token").get(verifyEmailToken);
-router.route("/edit-profile").get(getEditProfilePage);
+router.route("/edit-profile").get(getEditProfilePage).post(postEditProfile);
 router.route("/me").get(getMe);
 router.route("/logout").get(logoutUser);
 

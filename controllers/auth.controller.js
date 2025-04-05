@@ -11,11 +11,13 @@ import {
   verifyUserEmailAndUpdate,
   clearVerifyEmailTokens,
   sendNewVerifyEmailLink,
+  updateUserByName,
 } from "../services/auth.services.js";
 import {
   loginUserSchema,
   registerUserSchema,
   verifyEmailSchema,
+  verifyUserSchema,
 } from "../validators/auth-validator.js";
 
 export const getRegistrationPage = (req, res) => {
@@ -166,4 +168,19 @@ export const getEditProfilePage = async (req, res) => {
     name: user.name,
     errors: req.flash("errors"),
   });
+};
+
+export const postEditProfile = async (req, res) => {
+  if (!req.user) return res.redirect("/");
+  const { data, error } = verifyUserSchema.safeParse(req.body);
+
+  if (error) {
+    const errorMessages = error.errors.map((err) => err.message);
+    req.flash("errors", errorMessages);
+    return res.redirect("/edit-profile");
+  }
+
+  await updateUserByName({ userId: req.user.id, name: data.name });
+  return res.redirect("/profile");
+
 };

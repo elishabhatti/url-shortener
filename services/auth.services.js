@@ -79,6 +79,10 @@ export const findByUserId = async (userId) => {
   return user;
 };
 
+export const updateUserByName = async ({ userId, name }) => {
+  return await db.update(users).set({ name: name }).where(eq(users.id, userId));
+};
+
 export const refreshTokens = async (refreshToken) => {
   try {
     const decodedToken = verifyJwtToken(refreshToken);
