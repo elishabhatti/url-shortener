@@ -7,14 +7,10 @@ import {
   authenticateUser,
   findByUserId,
   getAllShortLinks,
-  generateRandomToken,
-  insertVerifyEmailToken,
-  createVerifyEmailLink,
   findVerificationEmailToken,
   verifyUserEmailAndUpdate,
   clearVerifyEmailTokens,
   sendNewVerifyEmailLink,
-  // generateToken,
 } from "../services/auth.services.js";
 import {
   loginUserSchema,
@@ -159,4 +155,15 @@ export const verifyEmailToken = async (req, res) => {
   clearVerifyEmailTokens(token.userId).catch(console.error(error));
 
   return res.redirect("/profile");
+};
+
+export const getEditProfilePage = async (req, res) => {
+  if (!req.user) return res.redirect("/");
+  const user = await findByUserId(req.user.id);
+  if (!user) return res.status(404).send("User not found");
+
+  return res.render("auth/edit-profile", {
+    name: user.name,
+    errors: req.flash("errors"),
+  });
 };
