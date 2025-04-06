@@ -17,6 +17,7 @@ import {
   loginUserSchema,
   registerUserSchema,
   verifyEmailSchema,
+  verifyPasswordSchema,
   verifyUserSchema,
 } from "../validators/auth-validator.js";
 
@@ -182,16 +183,22 @@ export const postEditProfile = async (req, res) => {
 
   await updateUserByName({ userId: req.user.id, name: data.name });
   return res.redirect("/profile");
-
 };
 
 export const getChangePasswordPage = async (req, res) => {
   if (!req.user) return res.redirect("/");
-  return res.render("auth/change-password", {errors: req.flash("errors")})
-}
+  return res.render("auth/change-password", { errors: req.flash("errors") });
+};
 
 export const postChangePassword = async (req, res) => {
-  if (!req.user) return res.redirect("/");
-  // return res.render("auth/change-password", {errors: req.flash("errors")})
-  
-}
+  const { data, error } = verifyPasswordSchema.safeParse(req.body);
+
+  if (error) {
+    const errorMessages = error.errors.map((err) => err.message);
+    req.flash("errors", errorMessages);
+    return res.redirect("/change-password");
+  }
+
+  console.log("data", data);
+  return res.redirect("/change-password");
+};
