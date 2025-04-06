@@ -184,3 +184,14 @@ export const postEditProfile = async (req, res) => {
   return res.redirect("/profile");
 
 };
+
+export const getChangePasswordPage = async (req, res) => {
+  if (!req.user) return res.redirect("/");
+  return res.render("auth/change-password", {errors: req.flash("errors")})
+}
+
+export const postChangePassword = async (req, res) => {
+  if (!req.user) return res.redirect("/");
+  // return res.render("auth/change-password", {errors: req.flash("errors")})
+  
+}
