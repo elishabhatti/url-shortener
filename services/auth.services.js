@@ -25,6 +25,10 @@ export const getUserByEmail = async (email) => {
   const [user] = await db.select().from(users).where(eq(users.email, email));
   return user;
 };
+export const confirmNewUserPassword = async (password, userId) => {
+  return await db.update(users).set({ password: password }).where(eq(users.id, userId));
+};
+
 export const createUser = async ({ name, email, password }) => {
   return await db
     .insert(users)
