@@ -12,7 +12,7 @@ import {
   clearVerifyEmailTokens,
   sendNewVerifyEmailLink,
   updateUserByName,
-  confirmNewUserPassword,
+  updateUserPassword
 } from "../services/auth.services.js";
 import {
   loginUserSchema,
@@ -204,6 +204,12 @@ export const postChangePassword = async (req, res) => {
   if (!user) return res.status(404).send("User not found");
 
   const isPasswordValid = await comparePassword(currentPassword, user.password);
+  if (!isPasswordValid) {
+    req.flash("errors", "Cannot Password that you entered is invalid");
+    return res.redirect("/change-passwork");
+  }
+
+  await updateUserPassword({ userId: user.id, newPassword });
 
   return res.redirect("/profile");
 };

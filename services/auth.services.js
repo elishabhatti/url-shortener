@@ -13,7 +13,6 @@ import {
   ACCESS_TOKEN_EXPIRY,
   MILLISECONDS_PER_SECOND,
 } from "../config/constants.js";
-// import { sendEmail } from "../lib/nodemailer.js";
 import { sendEmail } from "../lib/send-email.js";
 import argon2 from "argon2";
 import crypto from "crypto";
@@ -25,8 +24,12 @@ export const getUserByEmail = async (email) => {
   const [user] = await db.select().from(users).where(eq(users.email, email));
   return user;
 };
-export const confirmNewUserPassword = async (password, userId) => {
-  return await db.update(users).set({ password: password }).where(eq(users.id, userId));
+export const updateUserPassword = async ({ userId, newPassword }) => {
+  const newHashPassword = await hashPassword(newPassword);
+  return await db
+    .update(users)
+    .set({ password: newHashPassword })
+    .where(eq(users.id, userId));
 };
 
 export const createUser = async ({ name, email, password }) => {
