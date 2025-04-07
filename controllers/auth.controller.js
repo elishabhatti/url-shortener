@@ -201,7 +201,7 @@ export const postChangePassword = async (req, res) => {
   }
   const { currentPassword, newPassword } = data;
   const user = await findByUserId(req.user.id);
-  if (!user) return res.status(404).send("User not found");
+  if (!user) return res.status(404).send("User not found");  
 
   const isPasswordValid = await comparePassword(currentPassword, user.password);
   if (!isPasswordValid) {
