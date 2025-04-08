@@ -13,6 +13,7 @@ import {
   sendNewVerifyEmailLink,
   updateUserByName,
   updateUserPassword,
+  createResetPasswordLink,
 } from "../services/auth.services.js";
 import {
   forgotPasswordSchema,
@@ -232,7 +233,7 @@ export const postForgotPassword = async (req, res) => {
 
   const user = await getUserByEmail(data.email);
   if(user){
-    const resetPasswordLink = await createResetPasswordLink()
+    const resetPasswordLink = await createResetPasswordLink({userId: user.id, email: user.email})
   } 
 };
 

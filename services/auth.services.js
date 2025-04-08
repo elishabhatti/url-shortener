@@ -1,5 +1,6 @@
 import { db } from "../config/db.js";
 import {
+  passwordResetTokensTable,
   sessionsTable,
   shortLink,
   users,
@@ -294,4 +295,21 @@ export const sendNewVerifyEmailLink = async ({ email, userId }) => {
     subject: "Verify your email",
     html: htmlOutput,
   }).catch((error) => console.error(error));
+};
+
+export const createResetPasswordLink = async ({ userId }) => {
+  const randomToken = crypto.randomBytes(32).toString("hex");
+
+  const tokenHash = crypto
+    .createHash("sha256")
+    .update(randomToken)
+    .digest("hex");
+
+  await db
+    .delete(passwordResetTokensTable)
+    .where(eq(passwordResetTokensTable.id, userId));
+
+  await db.insert(passwordResetTokensTable).values({ userId, tokenHash });
+
+  return `${process.env.FRONTEND_URL}/reset-password/${randomToken}`;
 };
