@@ -15,6 +15,7 @@ import {
   updateUserPassword,
 } from "../services/auth.services.js";
 import {
+  forgotPasswordSchema,
   loginUserSchema,
   registerUserSchema,
   verifyEmailSchema,
@@ -221,6 +222,11 @@ export const getResetPasswordPage = async (req, res) => {
   });
 };
 
-export const postForgotPassword = (req, res) => {
-  console.log(req.body);
+export const postForgotPassword = async (req, res) => {
+  const { data, error } = forgotPasswordSchema.safeParse(req.body);
+  if (error) {
+    const errorMessages = error.errors.map((err) => err.message);
+    req.flash("errors", errorMessages);
+    return res.redirect("/change-password");
+  }
 };
