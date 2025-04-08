@@ -220,3 +220,7 @@ export const getResetPasswordPage = async (req, res) => {
     errors: req.flash("errors"),
   });
 };
+
+export const postForgotPassword = (req, res) => {
+  console.log(req.body);
+};
