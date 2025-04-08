@@ -226,7 +226,18 @@ export const postForgotPassword = async (req, res) => {
   const { data, error } = forgotPasswordSchema.safeParse(req.body);
   if (error) {
     const errorMessages = error.errors.map((err) => err.message);
-    req.flash("errors", errorMessages);
+    req.flash("errors", errorMessages[0]);
     return res.redirect("/change-password");
   }
+
+  const user = await getUserByEmail(data.email);
+  if(user){
+    const resetPasswordLink = await createResetPasswordLink()
+  } 
 };
+
+// generate random token
+//  convert into hash token
+// clear the previous data delete
+// now we need to insert userId hash token
+// return the the link (create the link)
