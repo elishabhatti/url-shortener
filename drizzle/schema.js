@@ -19,7 +19,6 @@ export const shortLink = mysqlTable("short_link", {
     .references(() => users.id, { onDelete: "cascade" }),
 });
 
-
 export const sessionsTable = mysqlTable("sessions", {
   id: int().autoincrement().primaryKey(),
   userId: int("user_id")
@@ -39,7 +38,7 @@ export const verifyEmailTokensTable = mysqlTable("is_email_valid", {
     .references(() => users.id, { onDelete: "cascade" }),
   token: varchar({ length: 8 }).notNull(),
   expiresAt: timestamp("expires_at")
-    .default(sql`(CURRENT_TIMESTAMP + INTERVAL 1 DAY)`) 
+    .default(sql`(CURRENT_TIMESTAMP + INTERVAL 1 DAY)`)
     .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -52,6 +51,19 @@ export const users = mysqlTable("users", {
   isEmailValid: boolean("is_email_valid").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export const passwordResetTokensTable = mysqlTable("password_reset_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" })
+    .unique(),
+  tokenHash: text("token_hash").notNull(),
+  expiresAt: timestamp("expires_at")
+    .default(sql`(CURRENT_TIMESTAMP + INTERVAL 1 HOUR)`)
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const usersRelation = relations(users, ({ many }) => ({
