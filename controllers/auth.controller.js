@@ -1,3 +1,5 @@
+import { getHtmlFromMjmlTemplate } from "../lib/get-html-from-mjml-template.js";
+import { sendEmail } from "../lib/send-email.js";
 import {
   getUserByEmail,
   createUser,
@@ -237,11 +239,17 @@ export const postForgotPassword = async (req, res) => {
       userId: user.id,
       email: user.email,
     });
-  }
-};
 
-// generate random token
-//  convert into hash token
-// clear the previous data delete
-// now we need to insert userId hash token
-// return the the link (create the link)
+    const html = await getHtmlFromMjmlTemplate("reset-password-email", {
+      name: user.name,
+      link: resetPasswordLink,
+    });
+
+    sendEmail({
+      to: user.email,
+      subject: "REST YOUR PASSWORD",
+      html,
+    });
+  }
+  return res.redirect("/reset-password");
+};

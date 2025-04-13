@@ -15,6 +15,7 @@ import {
   MILLISECONDS_PER_SECOND,
 } from "../config/constants.js";
 import { sendEmail } from "../lib/send-email.js";
+
 import argon2 from "argon2";
 import crypto from "crypto";
 import ejs from "ejs";
@@ -25,6 +26,24 @@ export const getUserByEmail = async (email) => {
   const [user] = await db.select().from(users).where(eq(users.email, email));
   return user;
 };
+
+export const createResetPasswordLink = async ({ userId }) => {
+  const randomToken = crypto.randomBytes(32).toString("hex");
+
+  const tokenHash = crypto
+    .createHash("sha256")
+    .update(randomToken)
+    .digest("hex");
+
+  await db
+    .delete(passwordResetTokensTable)
+    .where(eq(passwordResetTokensTable.id, userId));
+
+  await db.insert(passwordResetTokensTable).values({ userId, tokenHash });
+
+  return `${process.env.FRONTEND_URL}/reset-password/${randomToken}`;
+};
+
 export const updateUserPassword = async ({ userId, newPassword }) => {
   const newHashPassword = await hashPassword(newPassword);
   return await db
@@ -295,21 +314,4 @@ export const sendNewVerifyEmailLink = async ({ email, userId }) => {
     subject: "Verify your email",
     html: htmlOutput,
   }).catch((error) => console.error(error));
-};
-
-export const createResetPasswordLink = async ({ userId }) => {
-  const randomToken = crypto.randomBytes(32).toString("hex");
-
-  const tokenHash = crypto
-    .createHash("sha256")
-    .update(randomToken)
-    .digest("hex");
-
-  await db
-    .delete(passwordResetTokensTable)
-    .where(eq(passwordResetTokensTable.id, userId));
-
-  await db.insert(passwordResetTokensTable).values({ userId, tokenHash });
-
-  return `${process.env.FRONTEND_URL}/reset-password/${randomToken}`;
 };
