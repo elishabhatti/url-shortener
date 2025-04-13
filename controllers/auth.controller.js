@@ -227,6 +227,7 @@ export const getResetPasswordPage = async (req, res) => {
 
 export const postForgotPassword = async (req, res) => {
   const { data, error } = forgotPasswordSchema.safeParse(req.body);
+
   if (error) {
     const errorMessages = error.errors.map((err) => err.message);
     req.flash("errors", errorMessages[0]);
@@ -248,8 +249,10 @@ export const postForgotPassword = async (req, res) => {
     sendEmail({
       to: user.email,
       subject: "REST YOUR PASSWORD",
-      html,
+      html: html,
     });
   }
+
+  req.flash("formSubmitted", true);
   return res.redirect("/reset-password");
 };
