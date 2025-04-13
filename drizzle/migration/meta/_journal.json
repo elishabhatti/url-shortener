@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1743409799453,
-      "tag": "0000_wealthy_iceman",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1743412056042,
-      "tag": "0001_dazzling_princess_powerful",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1744095676311,
-      "tag": "0002_little_namora",
+      "when": 1744520388417,
+      "tag": "0000_public_rhodey",
       "breakpoints": true
     }
   ]

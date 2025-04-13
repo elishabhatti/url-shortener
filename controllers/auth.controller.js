@@ -232,9 +232,12 @@ export const postForgotPassword = async (req, res) => {
   }
 
   const user = await getUserByEmail(data.email);
-  if(user){
-    const resetPasswordLink = await createResetPasswordLink({userId: user.id, email: user.email})
-  } 
+  if (user) {
+    const resetPasswordLink = await createResetPasswordLink({
+      userId: user.id,
+      email: user.email,
+    });
+  }
 };
 
 // generate random token
