@@ -315,3 +315,19 @@ export const sendNewVerifyEmailLink = async ({ email, userId }) => {
     html: htmlOutput,
   }).catch((error) => console.error(error));
 };
+
+export const getResetPasswordToken = async (token) => {
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+  const [data] = await db
+    .select()
+    .from(passwordResetTokensTable)
+    .where(
+      and(
+        eq(passwordResetTokensTable.tokenHash, tokenHash),
+        gte(passwordResetTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`)
+      )
+    );
+
+  return data;
+};

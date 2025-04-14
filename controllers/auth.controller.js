@@ -15,6 +15,7 @@ import {
   updateUserByName,
   updateUserPassword,
   createResetPasswordLink,
+  getResetPasswordToken,
 } from "../services/auth.services.js";
 import fs from "fs/promises";
 import path from "path";
@@ -270,4 +271,10 @@ export const postForgotPassword = async (req, res) => {
 
   req.flash("formSubmitted", true);
   return res.redirect("/reset-password");
+};
+
+export const getResetPasswordTokenPage = async (req, res) => {
+  const token = req.params;
+  const passwordResetData = await getResetPasswordToken(token)
+  console.log(token);
 };
