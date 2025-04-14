@@ -17,7 +17,7 @@ import {
   getResetPasswordPage,
   postForgotPassword,
   getResetPasswordTokenPage,
-  // postResetPasswordToken,
+  postResetPasswordToken,
 } from "../controllers/auth.controller.js";
 
 const router = Router();
@@ -38,8 +38,10 @@ router
   .route("/reset-password")
   .get(getResetPasswordPage)
   .post(postForgotPassword);
-router.route("/reset-password/:token").get(getResetPasswordTokenPage);
-// .post(postResetPasswordToken);
+router
+  .route("/reset-password/:token")
+  .get(getResetPasswordTokenPage)
+  .post(postResetPasswordToken);
 router.route("/me").get(getMe);
 router.route("/logout").get(logoutUser);
 

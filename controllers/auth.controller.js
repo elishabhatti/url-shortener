@@ -16,6 +16,7 @@ import {
   updateUserPassword,
   createResetPasswordLink,
   getResetPasswordToken,
+  clearResetPasswordToken,
 } from "../services/auth.services.js";
 import fs from "fs/promises";
 import path from "path";
@@ -284,4 +285,29 @@ export const getResetPasswordTokenPage = async (req, res) => {
     errors: req.flash("errors"),
     token,
   });
+};
+
+export const postResetPasswordToken = async (req, res) => {
+  const { token } = req.params;
+
+  const passwordResetData = await getResetPasswordToken(token);
+  if (!passwordResetData) {
+    req.flash("errors", "Password Token is not Matching");
+    return res.render("auth/reset-password");
+  }
+
+    // const errorMessages = error.errors.map((err) => err.message);
+    // req.flash("errors", errorMessages[0]);
+    // return res.redirect(`/reset-password/${token}`);
+  // }
+
+  const { newPassword, confirmPassword } = req.body;
+  console.log(newPassword, confirmPassword);
+
+  const user = await findByUserId(passwordResetData.userId);
+
+  await clearResetPasswordToken(user.id);
+  await updateUserPassword({ userId: user.id, newPassword });
+
+  return res.redirect("/login");
 };
