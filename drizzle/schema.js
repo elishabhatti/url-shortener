@@ -80,7 +80,7 @@ export const shortLinksRelation = relations(shortLink, ({ one }) => ({
 
 export const sessionsRelation = relations(sessionsTable, ({ one }) => ({
   user: one(users, {
-    fields: [sessionsTable.userId],
+  fields: [sessionsTable.userId],
     references: [users.id],
   }),
 }));
