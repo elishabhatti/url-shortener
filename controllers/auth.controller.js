@@ -17,6 +17,10 @@ import {
   updateUserPassword,
   createResetPasswordLink,
 } from "../services/auth.services.js";
+import fs from "fs/promises"
+import path from "path"
+import mjml2html from "mjml"
+import ejs from "ejs"
 import {
   forgotPasswordSchema,
   loginUserSchema,
@@ -241,16 +245,39 @@ export const postForgotPassword = async (req, res) => {
       email: user.email,
     });
 
-    const html = await getHtmlFromMjmlTemplate("reset-password-email", {
+    // const html = await getHtmlFromMjmlTemplate("reset-password-email", {
+    //   name: user.name,
+    //   link: resetPasswordLink,
+    // });
+
+    // try {
+    //   await sendEmail({
+    //     to: user.email,
+    //     subject: "RESET YOUR PASSWORD",
+    //     html: html,
+    //   });
+    const mjmlTemplate = await fs.readFile(
+      path.join(import.meta.dirname, "..", "emails", "reset-password-email.mjml"),
+      "utf-8"
+    );
+
+    const filledTemplate = ejs.render(mjmlTemplate, {
       name: user.name,
       link: resetPasswordLink,
     });
 
+    const htmlOutput = mjml2html(filledTemplate).html;
+    console.log("Email", user.email, "userId", user.id);
+    console.log("html output",htmlOutput);
+    
+
     sendEmail({
       to: user.email,
-      subject: "REST YOUR PASSWORD",
-      html: html,
-    });
+      subject: "Verify your email",
+      html: htmlOutput,
+    }).catch((error) => console.error(error));
+
+    console.log("Email sent successfully");
   }
 
   req.flash("formSubmitted", true);
