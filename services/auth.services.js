@@ -1,5 +1,6 @@
 import { db } from "../config/db.js";
 import {
+  oauthAccountsTable,
   passwordResetTokensTable,
   sessionsTable,
   shortLink,
@@ -336,4 +337,74 @@ export const clearResetPasswordToken = async (userId) => {
   await db
     .delete(passwordResetTokensTable)
     .where(eq(passwordResetTokensTable.userId, userId));
+};
+
+export const getUserWithOauthId = async ({ email, provider }) => {
+  const [user] = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      isEmailValid: users.isEmailValid,
+      provideAccountId: oauthAccountsTable.providerAccountId,
+      provider: oauthAccountsTable.provider,
+    })
+    .from(users)
+    .where(eq(users.email, email))
+    .leftJoin(
+      oauthAccountsTable,
+      and(
+        eq(oauthAccountsTable.provider, provider),
+        eq(oauthAccountsTable.userId, users.id)
+      )
+    );
+
+  return user;
+};
+
+export const linkUserWithOauth = async ({
+  userId,
+  provider,
+  providerAccountId, // <-- FIX the spelling here
+}) => {
+  await db.insert(oauthAccountsTable).values({
+    userId,
+    provider,
+    providerAccountId, // <-- FIX here
+  });
+};
+
+export const createUserWithOauth = async ({
+  name,
+  email,
+  provider,
+  providerAccountId,
+}) => {
+  const user = await db.transaction(async (trx) => {
+    const [user] = await trx
+      .insert(users)
+      .values({
+        email,
+        name,
+        // password,
+        isEmailValid: true,
+      })
+      .$returningId();
+
+    await trx.insert(oauthAccountsTable).values({
+      provider,
+      providerAccountId, // <- correct
+      userId: user.id,
+    });
+
+    return {
+      id: user.id,
+      name,
+      email,
+      isEmailValid: true,
+      provider,
+      providerAccountId,
+    };
+  });
+  return user;
 };

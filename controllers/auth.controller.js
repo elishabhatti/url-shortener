@@ -17,6 +17,9 @@ import {
   createResetPasswordLink,
   getResetPasswordToken,
   clearResetPasswordToken,
+  getUserWithOauthId,
+  linkUserWithOauth,
+  createUserWithOauth,
 } from "../services/auth.services.js";
 import fs from "fs/promises";
 import path from "path";
@@ -30,6 +33,9 @@ import {
   verifyPasswordSchema,
   verifyUserSchema,
 } from "../validators/auth-validator.js";
+import { decodeIdToken, generateCodeVerifier, generateState } from "arctic";
+import { OAUTH_EXCHANGE_EXPIRAY } from "../config/constants.js";
+import { google } from "../lib/oauth/google.js";
 
 export const getRegistrationPage = (req, res) => {
   if (req.user) return res.redirect("/");
@@ -56,6 +62,14 @@ export const postLogin = async (req, res) => {
 
   if (!userExists) {
     req.flash("errors", "Invalid Password");
+    return res.redirect("/login");
+  }
+
+  if (!userExists.password) {
+    req.flash(
+      "errors",
+      "You have create account using social login. please login with your social account"
+    );
     return res.redirect("/login");
   }
 
@@ -296,9 +310,9 @@ export const postResetPasswordToken = async (req, res) => {
     return res.render("auth/reset-password");
   }
 
-    // const errorMessages = error.errors.map((err) => err.message);
-    // req.flash("errors", errorMessages[0]);
-    // return res.redirect(`/reset-password/${token}`);
+  // const errorMessages = error.errors.map((err) => err.message);
+  // req.flash("errors", errorMessages[0]);
+  // return res.redirect(`/reset-password/${token}`);
   // }
 
   const { newPassword, confirmPassword } = req.body;
@@ -310,4 +324,114 @@ export const postResetPasswordToken = async (req, res) => {
   await updateUserPassword({ userId: user.id, newPassword });
 
   return res.redirect("/login");
+};
+
+export const getGoogleLoginPage = (req, res) => {
+  if (req.user) return res.redirect("/");
+
+  try {
+    const state = generateState();
+    const codeVerifier = generateCodeVerifier();
+    const url = google.createAuthorizationURL(state, codeVerifier, [
+      "openid",
+      "profile",
+      "email",
+    ]);
+
+    const cookieConfig = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: OAUTH_EXCHANGE_EXPIRAY,
+      sameSite: "lax",
+    };
+
+    res.cookie("google_oauth_state", state, cookieConfig);
+    res.cookie("google_oauth_verifier", codeVerifier, cookieConfig);
+
+    res.redirect(url.toString());
+  } catch (error) {
+    console.error(`Error from get login with google page ${error}`);
+  }
+};
+
+export const getGoogleLoginCallback = async (req, res) => {
+  const { code, state } = req.query;
+
+  const {
+    google_oauth_state: storeState,
+    google_oauth_verifier: codeVerifier,
+  } = req.cookies;
+
+  console.log("Received from Google:", { code, state });
+  console.log("Stored cookies:", { storeState, codeVerifier });
+
+  if (!code || !state || !storeState || !codeVerifier || state !== storeState) {
+    req.flash(
+      "errors",
+      "Counld'nt login with Google because of invalid login attempt, Please try Again"
+    );
+    return res.redirect("/login");
+  }
+
+  let tokens;
+  try {
+    tokens = await google.validateAuthorizationCode(code, codeVerifier);
+  } catch (error) {
+    req.flash(
+      "errors",
+      "Counld'nt login with Google because of invalid login attempt, Please try Again"
+    );
+    return res.redirect("/login");
+  }
+
+  console.log("token google:", tokens);
+
+  const claims = decodeIdToken(tokens.idToken());
+  console.log("claims", claims);
+
+  const { sub: googleUserId, name, email } = claims;
+
+  let user = await getUserWithOauthId({
+    provider: "google",
+    email,
+  });
+
+  if (user && !user.provideAccountId) {
+    await linkUserWithOauth({
+      userId: user.id,
+      provider: "google",
+      providerAccountId: googleUserId,
+    });
+  }
+
+  if (!user) {
+    user = await createUserWithOauth({
+      name,
+      email,
+      provider: "google",
+      providerAccountId: googleUserId,
+    });
+  }
+
+  let userByEmail = await getUserByEmail(claims.email);
+
+  if (!userByEmail) {
+    userByEmail = await createUser({
+      name: claims.name,
+      email: claims.email,
+      profilePicture: claims.picture,
+    });
+  }
+  
+  await authenticateUser({
+    req,
+    res,
+    user: userByEmail,
+    name: claims.name,
+    email: claims.email,
+  });
+  
+  // after setting cookies, RESPOND to client
+  res.redirect('/'); // or your desired page
+  
 };

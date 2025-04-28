@@ -7,9 +7,11 @@ import requestIp from "request-ip";
 import { shortenedRoutes } from "./routes/shortener.routes.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { verifyAuthentication } from "./middlewares/verify-auth-middleware.js";
+import { google } from "./lib/oauth/google.js";
 
 const app = express();
 const PORT = process.env.PORT;
+console.log(google);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -34,5 +36,4 @@ app.set("views", "./views");
 app.use(express.static("public"));
 app.use(authRouter);
 app.use(shortenedRoutes);
-
 app.listen(PORT);

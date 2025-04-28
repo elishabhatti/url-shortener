@@ -8,6 +8,20 @@
       "when": 1744520388417,
       "tag": "0000_public_rhodey",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1745843333314,
+      "tag": "0001_wise_sunfire",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1745843833320,
+      "tag": "0002_blushing_rhino",
+      "breakpoints": true
     }
   ]
 }

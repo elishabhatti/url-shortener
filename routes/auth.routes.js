@@ -18,6 +18,8 @@ import {
   postForgotPassword,
   getResetPasswordTokenPage,
   postResetPasswordToken,
+  getGoogleLoginPage,
+  getGoogleLoginCallback
 } from "../controllers/auth.controller.js";
 
 const router = Router();
@@ -30,6 +32,9 @@ router.route("/verify-email").get(getVerifyEmailPage);
 router.route("/resend-verification-link").post(resendVerificationLink);
 router.route("/verify-email-token").get(verifyEmailToken);
 router.route("/edit-profile").get(getEditProfilePage).post(postEditProfile);
+router.route("/google").get(getGoogleLoginPage)
+
+router.route("/google/callback").get(getGoogleLoginCallback)
 router
   .route("/change-password")
   .get(getChangePasswordPage)
