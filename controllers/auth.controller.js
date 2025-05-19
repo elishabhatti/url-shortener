@@ -422,7 +422,7 @@ export const getGoogleLoginCallback = async (req, res) => {
       profilePicture: claims.picture,
     });
   }
-  
+
   await authenticateUser({
     req,
     res,
@@ -430,8 +430,7 @@ export const getGoogleLoginCallback = async (req, res) => {
     name: claims.name,
     email: claims.email,
   });
-  
+
   // after setting cookies, RESPOND to client
-  res.redirect('/'); // or your desired page
-  
+  res.redirect("/"); // or your desired page
 };

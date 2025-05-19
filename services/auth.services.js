@@ -370,7 +370,7 @@ export const linkUserWithOauth = async ({
   await db.insert(oauthAccountsTable).values({
     userId,
     provider,
-    providerAccountId, // <-- FIX here
+    providerAccountId,
   });
 };
 
@@ -393,7 +393,7 @@ export const createUserWithOauth = async ({
 
     await trx.insert(oauthAccountsTable).values({
       provider,
-      providerAccountId, // <- correct
+      providerAccountId,
       userId: user.id,
     });
 
