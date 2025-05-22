@@ -176,7 +176,6 @@ export const verifyEmailToken = async (req, res) => {
   }
 
   const [token] = await findVerificationEmailToken(data);
-  console.log("Verification Token", token);
   if (!token) res.send("Verification link invalid or expired!");
 
   await verifyUserEmailAndUpdate(token.email);
@@ -321,8 +320,6 @@ export const postResetPasswordToken = async (req, res) => {
   }
 
   const { newPassword, confirmPassword } = req.body;
-  console.log(newPassword, confirmPassword);
-
   const user = await findByUserId(passwordResetData.userId);
 
   await clearResetPasswordToken(user.id);
@@ -367,9 +364,6 @@ export const getGoogleLoginCallback = async (req, res) => {
     google_oauth_verifier: codeVerifier,
   } = req.cookies;
 
-  console.log("Received from Google:", { code, state });
-  console.log("Stored cookies:", { storeState, codeVerifier });
-
   if (!code || !state || !storeState || !codeVerifier || state !== storeState) {
     req.flash(
       "errors",
@@ -389,11 +383,7 @@ export const getGoogleLoginCallback = async (req, res) => {
     return res.redirect("/login");
   }
 
-  console.log("token google:", tokens);
-
   const claims = decodeIdToken(tokens.idToken());
-  console.log("claims", claims);
-
   const { sub: googleUserId, name, email, picture } = claims;
 
   let user = await getUserWithOauthId({
@@ -520,16 +510,18 @@ export const getGithubLoginCallback = async (req, res) => {
     await linkUserWithOauth({
       userId: user.id,
       provider: "github",
-      provideAccountId: githubUserId,
+      providerAccountId: githubUserId,
+      avatarUrl: avatar_url,
     });
   }
 
   if (!user) {
-    user = await createUserWithOauth({
+    user = user = await createUserWithOauth({
       name,
       email,
       provider: "github",
-      provideAccountId: githubUserId,
+      providerAccountId: githubUserId,
+      avatarUrl: avatar_url,
     });
   }
 
