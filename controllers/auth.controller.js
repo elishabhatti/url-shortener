@@ -436,5 +436,28 @@ export const getGoogleLoginCallback = async (req, res) => {
 
 
 export const getGithubLoginPage = async (req, res) => {
+   if (req.user) return res.redirect("/");
 
+  try {
+    const state = generateState();
+    const url = github.createAuthorizationURL(state, [
+      "openid",
+      "profile",
+      "email",
+    ]);
+
+    const cookieConfig = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: OAUTH_EXCHANGE_EXPIRAY,
+      sameSite: "lax",
+    };
+
+    res.cookie("google_oauth_state", state, cookieConfig);
+    res.cookie("google_oauth_verifier", codeVerifier, cookieConfig);
+
+    res.redirect(url.toString());
+  } catch (error) {
+    console.error(`Error from get login with google page ${error}`);
+  }
 }
