@@ -86,4 +86,4 @@ const passwordSchema = z
   });
 
 export const verifyResetPasswordSchema = passwordSchema;
-// export const setPasswordSchema = passwordSchema;
+export const setPasswordSchema = passwordSchema;
