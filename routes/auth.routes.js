@@ -25,6 +25,8 @@ import {
   getSetPasswordPage,
   postSetPassword,
 } from "../controllers/auth.controller.js";
+import multer from "multer";
+import path from "path";
 
 const router = Router();
 
@@ -34,24 +36,49 @@ router.route("/profile").get(getProfilePage);
 router.route("/verify-email").get(getVerifyEmailPage);
 router.route("/resend-verification-link").post(resendVerificationLink);
 router.route("/verify-email-token").get(verifyEmailToken);
-router.route("/edit-profile").get(getEditProfilePage).post(postEditProfile);
-router.route("/google").get(getGoogleLoginPage)
-router.route("/github").get(getGithubLoginPage)
 
-router.route("/google/callback").get(getGoogleLoginCallback)
-router.route("/github/callback").get(getGithubLoginCallback)
+const avatarStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/uploads/avatar");
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `${Date.now()}_${Math.random()}${ext}`);
+  },
+});
+
+const avatarFileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image/")) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only Imge files are allowed"), false);
+  }
+};
+
+const avatarUpload = multer({
+  storage: avatarStorage,
+  fileFilter: avatarFileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+router
+  .route("/edit-profile")
+  .get(getEditProfilePage)
+  .post(avatarUpload.single("avatar"), postEditProfile);
+router.route("/google").get(getGoogleLoginPage);
+router.route("/github").get(getGithubLoginPage);
+
+router.route("/google/callback").get(getGoogleLoginCallback);
+router.route("/github/callback").get(getGithubLoginCallback);
 
 router
   .route("/change-password")
   .get(getChangePasswordPage)
   .post(postChangePassword);
 
-router
-  .route("/set-password")
-  .get(getSetPasswordPage)
-  .post(postSetPassword);
+router.route("/set-password").get(getSetPasswordPage).post(postSetPassword);
 
-  router
+router
   .route("/reset-password")
   .get(getResetPasswordPage)
   .post(postForgotPassword);
