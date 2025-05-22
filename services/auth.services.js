@@ -368,13 +368,20 @@ export const getUserWithOauthId = async ({ email, provider }) => {
 export const linkUserWithOauth = async ({
   userId,
   provider,
-  providerAccountId, // <-- FIX the spelling here
+  providerAccountId,
+  avatarUrl,
 }) => {
   await db.insert(oauthAccountsTable).values({
     userId,
     provider,
     providerAccountId,
   });
+  if (!avatarUrl) {
+    await db
+      .update(users)
+      .set({ avatarUrl })
+      .where(and(eq(users.id), isNull(users.avatarUrl)));
+  }
 };
 
 export const createUserWithOauth = async ({
@@ -382,6 +389,7 @@ export const createUserWithOauth = async ({
   email,
   provider,
   providerAccountId,
+  avatarUrl,
 }) => {
   const user = await db.transaction(async (trx) => {
     const [user] = await trx
@@ -389,7 +397,8 @@ export const createUserWithOauth = async ({
       .values({
         email,
         name,
-        // password,
+        // password: ""
+        avatarUrl,
         isEmailValid: true,
       })
       .$returningId();

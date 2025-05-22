@@ -394,7 +394,7 @@ export const getGoogleLoginCallback = async (req, res) => {
   const claims = decodeIdToken(tokens.idToken());
   console.log("claims", claims);
 
-  const { sub: googleUserId, name, email } = claims;
+  const { sub: googleUserId, name, email, picture } = claims;
 
   let user = await getUserWithOauthId({
     provider: "google",
@@ -406,6 +406,7 @@ export const getGoogleLoginCallback = async (req, res) => {
       userId: user.id,
       provider: "google",
       providerAccountId: googleUserId,
+      avatarUrl: picture,
     });
   }
 
@@ -415,6 +416,7 @@ export const getGoogleLoginCallback = async (req, res) => {
       email,
       provider: "google",
       providerAccountId: googleUserId,
+      avatarUrl: picture,
     });
   }
 
@@ -424,7 +426,7 @@ export const getGoogleLoginCallback = async (req, res) => {
     userByEmail = await createUser({
       name: claims.name,
       email: claims.email,
-      profilePicture: claims.picture,
+      avatarUrl: picture,
     });
   }
 
