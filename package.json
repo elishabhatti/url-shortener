@@ -30,6 +30,7 @@
     "jsonwebtoken": "^9.0.2",
     "mjml": "^4.15.3",
     "mongoose": "^8.10.0",
+    "multer": "^2.0.0",
     "mysql2": "^3.14.0",
     "nanoid": "^5.1.5",
     "nodemailer": "^6.10.0",
