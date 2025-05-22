@@ -29,6 +29,7 @@ import {
   forgotPasswordSchema,
   loginUserSchema,
   registerUserSchema,
+  setPasswordSchema,
   verifyEmailSchema,
   verifyPasswordSchema,
   verifyUserSchema,
@@ -546,5 +547,22 @@ export const getSetPasswordPage = async (req, res) => {
 };
 
 export const postSetPassword = async (req, res) => {
-  
-}
+  if (!req.user) return res.redirect("/");
+  const { data, error } = setPasswordSchema.safeParse(req.body);
+  if (error) {
+    const errorMessages = error.errors.map((err) => err.message);
+    req.flash("errors", errorMessages);
+    return res.redirect("/set-password");
+  }
+  const { newPassword } = data;
+  const user = await findByUserId(req.user.id);
+  if (user.password) {
+    req.flash(
+      "erros",
+      "You already have your password, instead change your password"
+    );
+    return res.redirect("/set-password");
+  }
+  await updateUserPassword({ userId: req.user.id, newPassword });
+  return res.redirect("/profile");
+};
