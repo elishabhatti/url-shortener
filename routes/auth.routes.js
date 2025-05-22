@@ -24,7 +24,6 @@ import {
 
 const router = Router();
 
-// router.get("/register", getRegistrationPage);
 router.route("/login").get(getLoginPage).post(postLogin);
 router.route("/register").get(getRegistrationPage).post(postRegister);
 router.route("/profile").get(getProfilePage);
