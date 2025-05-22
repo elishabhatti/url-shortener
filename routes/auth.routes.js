@@ -21,6 +21,7 @@ import {
   getGoogleLoginPage,
   getGoogleLoginCallback,
   getGithubLoginPage,
+  getGithubLoginCallback,
 } from "../controllers/auth.controller.js";
 
 const router = Router();
@@ -36,6 +37,7 @@ router.route("/google").get(getGoogleLoginPage)
 router.route("/github").get(getGithubLoginPage)
 
 router.route("/google/callback").get(getGoogleLoginCallback)
+router.route("/github/callback").get(getGithubLoginCallback)
 router
   .route("/change-password")
   .get(getChangePasswordPage)
