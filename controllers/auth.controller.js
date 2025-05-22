@@ -431,6 +431,10 @@ export const getGoogleLoginCallback = async (req, res) => {
     email: claims.email,
   });
 
-  // after setting cookies, RESPOND to client
-  res.redirect("/"); // or your desired page
+  res.redirect("/"); 
 };
+
+
+export const getGithubLoginPage = async (req, res) => {
+
+}
