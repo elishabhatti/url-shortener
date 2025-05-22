@@ -144,6 +144,7 @@ export const getProfilePage = async (req, res) => {
       name: user.name,
       email: user.email,
       isEmailValid: user.isEmailValid,
+      hashPassword: Boolean(user.password),
       createdAt: user.createdAt,
       links: userShortLinks,
     },
@@ -531,3 +532,19 @@ export const getGithubLoginCallback = async (req, res) => {
 
   res.redirect("/");
 };
+
+export const getSetPasswordPage = async (req, res) => {
+  if (!req.user) return res.redirect("/login");
+
+  try {
+    return res.render("auth/set-password", {
+      errors: req.flash("errors"),
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const postSetPassword = async (req, res) => {
+  
+}
