@@ -167,7 +167,7 @@ export const resendVerificationLink = async (req, res) => {
   await sendNewVerifyEmailLink({ email: req.user.email, userId: req.user.id });
 
   res.redirect("/verify-email");
-};
+};  
 
 export const verifyEmailToken = async (req, res) => {
   const { data, error } = verifyEmailSchema.safeParse(req.query);
