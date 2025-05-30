@@ -5,7 +5,7 @@ import {
   getShortenerEditPage,
   deleteShortCode,
   EditShortCode,
-} from "../controllers/postShortner.controllers.js";
+} from "../controllers/postShortner.controller.js";
 
 import { Router } from "express";
 
