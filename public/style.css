@@ -9,7 +9,7 @@
 :root {
   /* Colors */
   --background: #0f0d13; /* Deep dark background */
-  --foreground: #f5f5f5; /* Light text for readability */
+  --foreground: white; /* Light text for readability */
   --muted: #a3a3a3; /* Muted gray text */
   --accent: #a238ff; /* Bright blue */
   --accent-hover: #a238ff; /* Softer blue on hover */
